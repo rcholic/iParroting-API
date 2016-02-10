@@ -34,7 +34,9 @@ module.exports.routes = {
 
   '/': {
     view: 'homepage'
-  }
+  },
+
+  'post /api/question/images/upload': 'QuestionController.uploadImage',
 
   /***************************************************************************
   *                                                                          *
