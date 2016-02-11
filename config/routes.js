@@ -37,6 +37,7 @@ module.exports.routes = {
   },
 
   'post /api/question/images/upload': 'QuestionController.uploadImage',
+  'post /api/question/images/uploads3': 'QuestionController.uploadImageToS3',
 
   /***************************************************************************
   *                                                                          *
