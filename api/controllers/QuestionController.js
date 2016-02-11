@@ -21,15 +21,17 @@ module.exports = {
 				sails.log.error('error in uploading image');
 				return res.serverError(err);
 			}
-			for (u in uploadedFiles) {
-				console.log('uploade file u: ', uploadedFiles[u].fd);
-			}
+			// for (u in uploadedFiles) {
+			// 	console.log('uploade file u: ', uploadedFiles[u].fd);
+			// }
 			sails.log.info('success in uploading image, uploadedFiles: ', uploadedFiles);
 			return res.json({
 				files: uploadedFiles,
 				textParams: req.params.all()
 			});
 		});
+
+		sails.log.info('block after uploading file!');
 	},
 
 };
