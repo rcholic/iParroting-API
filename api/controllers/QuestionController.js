@@ -7,7 +7,30 @@
 
 module.exports = {
 
-	uploadImage: function(req, res) {
+	/**
+	* fetch questions by page and page size
+	*/
+	fetchQuestions: function(req, res, next) {
+		sails.log.info('req.params.all(): ', req.allParams()); // req.params.all()
+
+		var page = req.params.page;
+		var pageSize = req.params.size;
+		Question.find()
+			.paginate({page: page, limit: pageSize})
+			.sort('createdAt')
+			.exec(function(err, questions) {
+				if (err) {
+					// next(err);
+					return res.serverError(err);
+				}
+
+				return res.json(questions);
+			});
+		// return res.status(200).send({message: 'okay!'});
+	},
+
+	// upload images to the hard drive of the hosting server
+	uploadImageToServer: function(req, res) {
 
 		var uploadFile = req.file('images');
 		sails.log.debug('uploadFile: ', uploadFile);
