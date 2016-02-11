@@ -44,6 +44,12 @@ module.exports = {
     user: {
       //owner model - user
       model: 'user'
+    },
+
+    tags: {
+      collection: 'tag',
+      via: 'questions',
+      dominant: true
     }
 
   }

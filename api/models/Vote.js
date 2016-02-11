@@ -11,12 +11,16 @@ module.exports = {
   attributes: {
 
     voteType: {
-      type: 'int',  // 1 for up, -1 for downvote
+      type: 'integer',  // 1 for up, -1 for downvote
       required: true
     },
 
     user: {
       model: 'user'
+    },
+
+    answer: {
+      model: 'answer'
     },
 
     question: {
@@ -26,6 +30,6 @@ module.exports = {
     answer: {
       model: 'answer'
     }
-        
+
   }
 };
