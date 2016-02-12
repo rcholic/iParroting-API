@@ -17,7 +17,11 @@ module.exports = {
 		var pageSize = req.params.size;
 		Question.find()
 			.paginate({page: page, limit: pageSize})
-			.sort('createdAt')
+			.populate('user')
+			.populate('comments')
+			.populate('votes')
+			.populate('answers')
+			.sort('createdAt DESC')
 			.exec(function(err, questions) {
 				if (err) {
 					// next(err);

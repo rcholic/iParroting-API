@@ -19,7 +19,7 @@ module.exports = {
     },
 
     numImages: {
-      type: 'int',
+      type: 'integer',
       defaultsTo: 0
     },
 
