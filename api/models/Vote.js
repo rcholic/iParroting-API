@@ -25,11 +25,6 @@ module.exports = {
 
     question: {
       model: 'question'
-    },
-
-    answer: {
-      model: 'answer'
     }
-
   }
 };

@@ -18,9 +18,9 @@ module.exports = {
       type: 'string'
     },
 
-    numImages: {
-      type: 'integer',
-      defaultsTo: 0
+    // array of image paths
+    images: {
+      type: 'array'
     },
 
     // one question - to many answers

@@ -14,14 +14,20 @@ module.exports = {
       type: 'string'
     },
 
+    // path to the audio file
+    audioFilePath: {
+      type: 'string',
+      defaultsTo: null
+    },
+
+    // array of image paths
+    images: {
+      type: 'array'
+    },
+
     // many answers to one owner: question
     question: {
       model: 'question'
-    },
-
-    votes: {
-      collection: 'vote',
-      via: 'answer'
     },
 
     votes: {
