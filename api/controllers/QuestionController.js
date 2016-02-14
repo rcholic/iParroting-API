@@ -8,6 +8,7 @@
 var amazonS3Service = require('../services/AmazonS3');
 var Q = require('q');
 var Promise = require('bluebird');
+var config = require('../services/config');
 // Promise.promisify(amazonS3Service);
 
 module.exports = {
@@ -65,32 +66,27 @@ module.exports = {
 
 		sails.log.info('block after uploading file!');
 	},
-
-	createQuestion: function(req, res) {
+	// create a new question and upload images, if any
+	create: function(req, res) {
 		if (req.file('images')) {
-			// sails.controllers.
+			return uploadToS3(req, res);
 		}
-	},
 
-	uploadImageToS3: function(req, res) {
-		// return amazonS3Service(req, res, uploadCallback);
-		sails.log.info('req.params1: ', req.params.all());
-		uploadToS3(req, res);
+		return createQuestion(req.params.all(), res);
 	}
 };
 
-var uploadToS3 = function(req, res) {
+// helper functions below
 
-		amazonS3Service(req, res, function(err, uploadedFiles) {
+var uploadToS3 = function(req, res) {
+		// upload to Amazon S3 storage
+		var bucketName = config.AMAZON_S3_IMGBUCKETNAME;
+		amazonS3Service(req, res, bucketName, function(err, uploadedFiles) {
 				var deferred = Q.defer();
 				var filePaths = [];
 				if (err)  {
 					sails.log.error('error in uploading image');
 					deferred.reject(filePaths);
-					// return deferred.promise;
-					// return filePaths;
-					// return res.json(filePaths);
-					// return res.serverError(err);
 				}
 				sails.log.info('req.params object: ', req.params.all());
 				// sails.log.info('success in uploading image, uploadedFiles: ', uploadedFiles);
@@ -101,13 +97,16 @@ var uploadToS3 = function(req, res) {
 
 				var questionObj = req.params.all();
 				questionObj.images = filePaths;
-				Question.create(questionObj, function(err, newQ) {
-					if (err) {
-						return res.status(401).send({message: 'failed to create question'});
-					}
-					return res.json({message: newQ});
-				});
-				// return deferred.promise;
-				// return res.json({filePaths: filePaths});
+				createQuestion(questionObj, res);
 		});
 };
+
+// Persist question to database with file paths to the upload images, if any
+var createQuestion = function(questionObj, res) {
+	Question.create(questionObj, function(err, newQ) {
+		if (err) {
+			return res.status(401).send({message: 'failed to create question'});
+		}
+		return res.json({message: newQ});
+	});
+}

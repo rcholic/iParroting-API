@@ -37,7 +37,7 @@ module.exports.routes = {
   },
   'get /api/questions/:page/:size': 'QuestionController.fetchQuestions',
   'post /api/question/images/upload': 'QuestionController.uploadImageToServer',
-  'post /api/question/images/uploads3': 'QuestionController.uploadImageToS3',
+  'post /api/question/new': 'QuestionController.create',
 
   /***************************************************************************
   *                                                                          *
