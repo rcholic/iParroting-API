@@ -1,0 +1,5 @@
+module.exports = {
+  AMAZON_S3_KEY: process.env.AMAZON_S3_KEY,
+  AMAZON_S3_SECRET: process.env.AMAZON_S3_SECRET,
+  AMAZON_S3_IMGBUCKETNAME: process.env.AMAZON_S3_IMGBUCKETNAME
+};

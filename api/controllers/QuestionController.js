@@ -5,6 +5,8 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
+var amazonS3Service = require('../services/AmazonS3');
+
 module.exports = {
 
 	/**
@@ -61,7 +63,22 @@ module.exports = {
 		sails.log.info('block after uploading file!');
 	},
 
+	createQuestion: function(req, res) {
+		if (req.file('images')) {
+			// sails.controllers.
+		}
+	},
+
 	uploadImageToS3: function(req, res) {
+		// return amazonS3Service(req, res);
+		if (amazonS3Service(req, res).length > 0) {
+				sails.log.info('upload successful!');
+		} else {
+			sails.log.error('upload failed!');
+		}
+
+		return res.json({message: 'successful!'});
+		/*
 		var images = req.file('images');
 		images.upload({
 			maxBytes:1500000,
@@ -82,44 +99,9 @@ module.exports = {
 				files: uploadedFiles, // array, each element has 'fd' field as the uploaded path url
 				textParams: req.params.all()
 			});
-			/*** uploadedFiles, if successful upload:
-			{
-"files": [
-{
-  "fd": "2bf1790b-d579-4244-8522-28f5c5c369f0.jpg",
-  "size": 769309,
-  "type": "image/jpeg",
-  "filename": "parrot_cartoon.jpg",
-  "status": "bufferingOrWriting",
-  "field": "images",
-  "extra": {
-	"Location": "https://parroting-images.s3.amazonaws.com/2bf1790b-d579-4244-8522-28f5c5c369f0.jpg",
-	"Bucket": "parroting-images",
-	"Key": "2bf1790b-d579-4244-8522-28f5c5c369f0.jpg",
-	"ETag": "\"ef53136a76cbae7f65ef66d9be2afc02-1\"",
-	"size": 93262
-  }
-},
-{
-  "fd": "82f1e6dd-2c36-4c07-b9c0-03dff48d40a5.png",
-  "size": 675866,
-  "type": "image/png",
-  "filename": "Screen%20Shot%202016-02-05%20at%204.14.02%20PM.png",
-  "status": "bufferingOrWriting",
-  "field": "images",
-  "extra": {
-	"Location": "https://parroting-images.s3.amazonaws.com/82f1e6dd-2c36-4c07-b9c0-03dff48d40a5.png",
-	"Bucket": "parroting-images",
-	"Key": "82f1e6dd-2c36-4c07-b9c0-03dff48d40a5.png",
-	"ETag": "\"306e293f76206765cce962cf0c69fb76-1\"",
-	"size": 675866
-  }
-}
-],
-"textParams": {}
-}
-			 */
+
 		})
+		*/
 	}
 
 };
