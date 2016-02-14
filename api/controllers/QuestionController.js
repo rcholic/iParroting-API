@@ -6,6 +6,9 @@
  */
 
 var amazonS3Service = require('../services/AmazonS3');
+var Q = require('q');
+var Promise = require('bluebird');
+// Promise.promisify(amazonS3Service);
 
 module.exports = {
 
@@ -70,38 +73,41 @@ module.exports = {
 	},
 
 	uploadImageToS3: function(req, res) {
-		// return amazonS3Service(req, res);
-		if (amazonS3Service(req, res).length > 0) {
-				sails.log.info('upload successful!');
-		} else {
-			sails.log.error('upload failed!');
-		}
-
-		return res.json({message: 'successful!'});
-		/*
-		var images = req.file('images');
-		images.upload({
-			maxBytes:1500000,
-			adapter: require('skipper-s3'),
-			key: '',
-			secret: '',
-			bucket: 'parroting-images'
-		}, function(err, uploadedFiles) {
-			if (err)  {
-				sails.log.error('error in uploading image');
-				return res.serverError(err);
-			}
-			// for (u in uploadedFiles) {
-			// 	console.log('uploade file u: ', uploadedFiles[u].fd);
-			// }
-			sails.log.info('success in uploading image, uploadedFiles: ', uploadedFiles);
-			return res.json({
-				files: uploadedFiles, // array, each element has 'fd' field as the uploaded path url
-				textParams: req.params.all()
-			});
-
-		})
-		*/
+		// return amazonS3Service(req, res, uploadCallback);
+		sails.log.info('req.params1: ', req.params.all());
+		uploadToS3(req, res);
 	}
+};
 
+var uploadToS3 = function(req, res) {
+
+		amazonS3Service(req, res, function(err, uploadedFiles) {
+				var deferred = Q.defer();
+				var filePaths = [];
+				if (err)  {
+					sails.log.error('error in uploading image');
+					deferred.reject(filePaths);
+					// return deferred.promise;
+					// return filePaths;
+					// return res.json(filePaths);
+					// return res.serverError(err);
+				}
+				sails.log.info('req.params object: ', req.params.all());
+				// sails.log.info('success in uploading image, uploadedFiles: ', uploadedFiles);
+				filePaths = uploadedFiles.map(function(file) {
+					return file.extra.Location;
+				});
+				deferred.resolve(filePaths);
+
+				var questionObj = req.params.all();
+				questionObj.images = filePaths;
+				Question.create(questionObj, function(err, newQ) {
+					if (err) {
+						return res.status(401).send({message: 'failed to create question'});
+					}
+					return res.json({message: newQ});
+				});
+				// return deferred.promise;
+				// return res.json({filePaths: filePaths});
+		});
 };
