@@ -19,8 +19,8 @@ module.exports = {
 	fetchQuestions: function(req, res, next) {
 		sails.log.info('req.params.all(): ', req.allParams()); // req.params.all()
 
-		var page = req.params.page;
-		var pageSize = req.params.size;
+		var page = req.params.page; // page number starts from 1
+		var pageSize = req.params.size || 10; // page size 
 		Question.find()
 			.paginate({page: page, limit: pageSize})
 			.populate('user')

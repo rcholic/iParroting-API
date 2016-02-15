@@ -35,9 +35,9 @@ module.exports.routes = {
   '/': {
     view: 'homepage'
   },
-  'get /api/questions/:page/:size': 'QuestionController.fetchQuestions',
-  'post /api/question/images/upload': 'QuestionController.uploadImageToServer',
-  'post /api/question/new': 'QuestionController.create',
+  'get /api/v1/questions/:size/:page': 'QuestionController.fetchQuestions',
+  'post /api/v1/question/images/upload': 'QuestionController.uploadImageToServer',
+  'post /api/v1/question/new': 'QuestionController.create',
 
   /***************************************************************************
   *                                                                          *
