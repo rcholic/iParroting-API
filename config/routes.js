@@ -35,9 +35,13 @@ module.exports.routes = {
   '/': {
     view: 'homepage'
   },
+  // questions:
   'get /api/v1/questions/:size/:page': 'QuestionController.fetchQuestions',
   'post /api/v1/question/images/upload': 'QuestionController.uploadImageToServer',
   'post /api/v1/question/new': 'QuestionController.create',
+
+  // answers:
+  'get /api/v1/question/:questionId/answers': 'AnswerController.fetchAnswers',
 
   /***************************************************************************
   *                                                                          *
