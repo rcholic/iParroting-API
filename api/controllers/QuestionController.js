@@ -18,15 +18,15 @@ module.exports = {
 	*/
 	fetchQuestions: function(req, res, next) {
 		sails.log.info('req.params.all(): ', req.allParams()); // req.params.all()
-
 		var page = req.params.page; // page number starts from 1
-		var pageSize = req.params.size || 10; // page size 
+		var pageSize = req.params.size || 10; // page size
 		Question.find()
 			.paginate({page: page, limit: pageSize})
-			.populate('user')
-			.populate('comments')
-			.populate('votes')
-			.populate('answers')
+			.populateAll()
+			// .populate('user')
+			// .populate('comments')
+			// .populate('votes')
+			// .populate('answers')
 			.sort('createdAt DESC')
 			.exec(function(err, questions) {
 				if (err) {
@@ -66,6 +66,7 @@ module.exports = {
 
 		sails.log.info('block after uploading file!');
 	},
+
 	// create a new question and upload images, if any
 	create: function(req, res) {
 		if (req.file('images')) {
