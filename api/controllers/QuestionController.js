@@ -42,7 +42,7 @@ module.exports = {
 	// upload images to the hard drive of the hosting server
 	uploadImageToServer: function(req, res) {
 
-		var uploadFile = req.file('images');
+		var uploadFile = req.file(config.UPLOAD_IMG_FIELD);
 		sails.log.debug('uploadFile: ', uploadFile);
 		uploadFile.upload({
 			// dirname: '../../assets/images',
@@ -69,8 +69,8 @@ module.exports = {
 
 	// create a new question and upload images, if any
 	create: function(req, res) {
-		if (req.file('images')) {
-			return uploadToS3(req, res);
+		if (req.file(config.UPLOAD_IMG_FIELD)) {
+			return uploadToS3(req, res, config.UPLOAD_IMG_FIELD);
 		}
 
 		return createQuestion(req.params.all(), res);
@@ -79,10 +79,10 @@ module.exports = {
 
 // helper functions below
 
-var uploadToS3 = function(req, res) {
+var uploadToS3 = function(req, res, fieldName) {
 		// upload to Amazon S3 storage
 		var bucketName = config.AMAZON_S3_IMGBUCKETNAME;
-		amazonS3Service(req, res, bucketName, function(err, uploadedFiles) {
+		amazonS3Service(req, res, bucketName, fieldName, function(err, uploadedFiles) {
 				var deferred = Q.defer();
 				var filePaths = [];
 				if (err)  {
@@ -106,8 +106,8 @@ var uploadToS3 = function(req, res) {
 var createQuestion = function(questionObj, res) {
 	Question.create(questionObj, function(err, newQ) {
 		if (err) {
-			return res.status(401).send({message: 'failed to create question'});
+			return res.json({message: 'failed to create question'});
 		}
-		return res.json({message: newQ});
+		return res.json(newQ);
 	});
 }

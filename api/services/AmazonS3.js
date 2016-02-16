@@ -1,10 +1,10 @@
 var config = require('./config');
 
-var amazonS3Service = function(req, res, s3BucketName, cb) {
-		var images = req.file('images');
+var amazonS3Service = function(req, res, s3BucketName, fieldName, cb) {
+		var files = req.file(fieldName);
 		sails.log.info('in s3 service, req.params: ', req.params.all());
 
-		images.upload({
+		files.upload({
 			maxBytes:1500000,
 			adapter: require('skipper-s3'),
 			key: config.AMAZON_S3_KEY,
