@@ -32,6 +32,7 @@ module.exports = {
 			});
 	},
 
+	// override the blueprint API for create
 	create: function(req, res) {
 		sails.log.info('creating answer... req.params: ', req.params.all());
 		// sails.log.info('req.file.audio ', req.file('audio'));

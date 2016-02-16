@@ -2,7 +2,7 @@ var config = require('./config');
 
 var amazonS3Service = function(req, res, s3BucketName, fieldName, cb) {
 		var files = req.file(fieldName);
-		sails.log.info('in s3 service, req.params: ', req.params.all());
+		// sails.log.info('in s3 service, req.params: ', req.params.all());
 
 		files.upload({
 			maxBytes:1500000,
