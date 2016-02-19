@@ -59,6 +59,16 @@ module.exports = {
       via: 'user'
     },
 
+    favorites: {
+      collection: 'favorite',
+      via: 'user'
+    },
+
+    redFlags: {
+      collection: 'redFlag',
+      via: 'flaggedByUser'
+    },
+
     toJSON: function() {
       var obj = this.toObject();
       delete obj.password;

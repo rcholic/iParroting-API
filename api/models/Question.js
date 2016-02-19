@@ -50,6 +50,16 @@ module.exports = {
       collection: 'tag',
       via: 'questions',
       dominant: true
+    },
+
+    favorited: {
+      collection: 'favorite',
+      via: 'questions'
+    },
+
+    redFlagged: {
+      collection: 'redFlag',
+      via: 'questions'
     }
 
   }
