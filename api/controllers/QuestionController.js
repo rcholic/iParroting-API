@@ -69,7 +69,8 @@ module.exports = {
 
 	// create a new question and upload images, if any
 	create: function(req, res) {
-		if (req.file(config.UPLOAD_IMG_FIELD)) {
+		sails.log.info('creating a question, req.params.all: ', req.params.all());
+		if (typeof req.file === 'function' && req.file(config.UPLOAD_IMG_FIELD)) {
 			return uploadToS3(req, res, config.UPLOAD_IMG_FIELD);
 		}
 
