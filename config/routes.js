@@ -43,6 +43,10 @@ module.exports.routes = {
   // answers:
   'get /api/v1/question/:questionId/answers': 'AnswerController.fetchAnswers',
 
+
+  // favorite:
+  'post /api/v1/favorite': 'FavoriteController.addOrRemoveFavoriteQuestion'
+
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *
