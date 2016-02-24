@@ -5,6 +5,8 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
+ var _ = require('lodash');
+
 module.exports = {
 
 	// post, params: {user: 'userId', question: 'questionId'}
@@ -32,16 +34,20 @@ module.exports = {
 								});
 							} else {
 								sails.log.info('pushing in question now!');
-								/*
-								foundFav.questions.push(questionId);
+								var contains = _.some(foundFav.questions, {id: questionId});
+								sails.log.info('contains? ', contains);
+								if (contains) {
+									foundFav.questions.remove(questionId);
+								}
+								// foundFav.questions.add(questionId);
 								sails.log.info(foundFav.questions);
 								foundFav.save(function(err, updatedFav) {
 									if (err) return res.json({message: 'error in adding favorites'});
 									sails.log.info('success updating favorite');
 									return res.json(updatedFav);
 								});
-								*/
 
+								/*
 								Question.findOneById(questionId, function(err, foundQ) {
 									foundFav.questions.add(foundQ);
 									foundFav.save(function(err, updatedFav) {
@@ -49,16 +55,8 @@ module.exports = {
 										sails.log.info('success updating favorite');
 										return res.json(updatedFav);
 									});
-
-									/*
-									Favorite.update(foundFav).exec(function(err, updatedFav) {
-										if (err) return res.json({message: 'error in adding favorites'});
-										sails.log.info('success updating favorite');
-										return res.json(updatedFav);
-									});
-									*/
-
 								});
+								*/
 							}
 						});
 	}, // update
