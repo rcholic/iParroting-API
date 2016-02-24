@@ -38,9 +38,10 @@ module.exports = {
 								sails.log.info('contains? ', contains);
 								if (contains) {
 									foundFav.questions.remove(questionId);
+								} else {
+									foundFav.questions.add(questionId);
 								}
-								// foundFav.questions.add(questionId);
-								sails.log.info(foundFav.questions);
+								// save the update
 								foundFav.save(function(err, updatedFav) {
 									if (err) return res.json({message: 'error in adding favorites'});
 									sails.log.info('success updating favorite');
