@@ -16,21 +16,23 @@ module.exports = {
 		var questionId = params.question || null;
 		sails.log.info('userId: ', userId);
 		if (!userId || !questionId) {
-			return res.status(403).send({message: 'user and quesetion are required'});
+      // TODO: get user in the server session
+      return res.forbidden({error: 'user and question are required'});
+			// return res.status(403).send({message: 'user and quesetion are required'});
 		}
 		Favorite.findOne({user: userId})
 						.populate('questions')
 						.exec(function(err, foundFav) {
-							if (err) return res.json({message: 'not found'});
+							if (err) return res.notFound({error: 'not found'}); //res.json({message: 'not found'});
 
 							sails.log.info('foundFav: ', foundFav);
 							if (!foundFav) {
 								var favObj = {user: userId, questions: [questionId]};
 								Favorite.create(favObj, function(err, newFav) {
-									if (err) return res.json({message: 'error in adding favorites'});
+									if (err) return res.serverError({error: 'error in saving the favorite'}); // res.json({message: 'error in adding favorites'});
 
 									sails.log.info('success creating favorite');
-									return res.json(newFav);
+									return res.ok({data: newFav}); //res.json(newFav);
 								});
 							} else {
 								sails.log.info('pushing in question now!');
@@ -43,9 +45,9 @@ module.exports = {
 								}
 								// save the update
 								foundFav.save(function(err, updatedFav) {
-									if (err) return res.json({message: 'error in adding favorites'});
+									if (err) return res.serverError({error: 'error in saving the favorite'}); // res.json({message: 'error in adding favorites'});
 									sails.log.info('success updating favorite');
-									return res.json(updatedFav);
+									return res.ok({data: updatedFav}); // res.json(updatedFav);
 								});
 							}
 						});

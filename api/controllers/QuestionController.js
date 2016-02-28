@@ -31,12 +31,11 @@ module.exports = {
 			.exec(function(err, questions) {
 				if (err) {
 					// next(err);
-					return res.serverError(err);
+					return res.serverError({error: err});
 				}
 
-				return res.json(questions);
+				return res.ok({data: questions}); // res.json(questions);
 			});
-		// return res.status(200).send({message: 'okay!'});
 	},
 
 	// upload images to the hard drive of the hosting server
@@ -52,16 +51,15 @@ module.exports = {
 		}, function whenDone(err, uploadedFiles) {
 			if (err)  {
 				sails.log.error('error in uploading image');
-				return res.serverError(err);
+				return res.serverError({error: err});
 			}
-			// for (u in uploadedFiles) {
-			// 	console.log('uploade file u: ', uploadedFiles[u].fd);
-			// }
+
 			sails.log.info('success in uploading image, uploadedFiles: ', uploadedFiles);
-			return res.json({
-				files: uploadedFiles, // array, each element has 'fd' field as the uploaded path url
-				textParams: req.params.all()
-			});
+			return res.ok({data: {files: uploadedFiles, textParams: req.params.all()}});
+			// return res.json({
+			// 	files: uploadedFiles, // array, each element has 'fd' field as the uploaded path url
+			// 	textParams: req.params.all()
+			// });
 		});
 
 		sails.log.info('block after uploading file!');
@@ -107,8 +105,10 @@ var uploadToS3 = function(req, res, fieldName) {
 var createQuestion = function(questionObj, res) {
 	Question.create(questionObj, function(err, newQ) {
 		if (err) {
-			return res.json({message: 'failed to create question'});
+			return res.serverError({error: 'failed to create question'});
+			// return res.json({message: 'failed to create question'});
 		}
-		return res.json(newQ);
+		return res.ok({data: newQ});
+		// return res.json(newQ);
 	});
 }

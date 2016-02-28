@@ -26,9 +26,11 @@ module.exports = {
 			.sort('createdAt DESC')
 			.exec(function(err, answers) {
 				if (err) {
-					return res.json({message: 'error in retrieving answers'});
+          return res.notFound({error: 'error in retrieving answers'});
+					// return res.json({message: 'error in retrieving answers'});
 				}
-				return res.json(answers);
+        return res.ok({data: answers});
+				// return res.json(answers);
 			});
 	},
 
@@ -63,12 +65,15 @@ var uploadAudioToS3 = function(req, res, fieldName) {
 
 var createAnswer = function(answerObj, res) {
 	if (!answerObj.question) {
-		return res.status(405).send({message: 'no question is associated with the answer'});
+    return res.notFound({error: 'no question is associated with the answer'});
+		// return res.status(405).send({message: 'no question is associated with the answer'});
 	}
 	Answer.create(answerObj, function(err, newA) {
 		if (err) {
-			return res.json({message: 'error in saving the answer'});
+      return res.serverError({error: 'error in saving the answer'});
+			// return res.json({message: 'error in saving the answer'});
 		}
-		return res.json(newA);
+    return res.ok({data: newA});
+		// return res.json(newA);
 	});
 }
