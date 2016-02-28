@@ -35,6 +35,10 @@ module.exports.routes = {
   '/': {
     view: 'homepage'
   },
+
+  // users:
+  'post /api/v1/users/mobile-3rdparty-login': 'UserController.mobileThirdPartyLogin',
+
   // questions:
   'get /api/v1/questions/:size/:page': 'QuestionController.fetchQuestions',
   'post /api/v1/question/images/upload': 'QuestionController.uploadImageToServer',
