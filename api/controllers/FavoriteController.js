@@ -47,17 +47,6 @@ module.exports = {
 									sails.log.info('success updating favorite');
 									return res.json(updatedFav);
 								});
-
-								/*
-								Question.findOneById(questionId, function(err, foundQ) {
-									foundFav.questions.add(foundQ);
-									foundFav.save(function(err, updatedFav) {
-										if (err) return res.json({message: 'error in adding favorites'});
-										sails.log.info('success updating favorite');
-										return res.json(updatedFav);
-									});
-								});
-								*/
 							}
 						});
 	}, // update
