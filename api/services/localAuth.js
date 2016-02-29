@@ -21,7 +21,7 @@ module.exports = {
       thirdPartyAuthToken: thirdPartyAuthToken
     };
 
-    return createSendToken(user, res);
+    return createSendToken(user, req, res);
   },
 
   // local authentication with user registered in the database
