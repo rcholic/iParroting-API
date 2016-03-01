@@ -9,7 +9,7 @@ var createSendToken = function(user, req, res) {
     provider: user.provider || 'local',
     iat: moment().unix(),
     authToken: user.thirdPartyAuthToken,
-    exp: moment().add(7, 'days').unix()
+    exp: moment().add(config.TOKEN_VALID_DAYS, 'days').unix()
   };
   req.session.user = user;
   req.session.authenticated = true; // for policy to use

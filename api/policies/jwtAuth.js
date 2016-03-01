@@ -11,7 +11,9 @@ module.exports = function(req, res, next) {
  var token = req.headers.Authorization.split(' ')[1];
  var payload = jwt.decode(token, config.JWTTOKEN_SECRET);
 
- if (!payload.sub || !payload.authToken) {
+ // config.TOKEN_VALID_DAYS
+ var today = moment();
+ if (!payload.sub || !payload.authToken || moment.unix(payload.exp).isAfter(today)) {
    return res.forbidden({error: 'Access is forbidden'});
  }
 

@@ -24,6 +24,10 @@ module.exports.policies = {
   }
   */
 
+  'FavoriteController': {
+    'addOrRemoveFavoriteQuestion': ['jwtAuth', 'sessionAuth']
+  }
+
   /***************************************************************************
   *                                                                          *
   * Default policy for all controllers and actions (`true` allows public     *
