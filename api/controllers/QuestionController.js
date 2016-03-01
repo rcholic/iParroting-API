@@ -104,12 +104,20 @@ var uploadToS3 = function(req, res, fieldName) {
 
 // Persist question to database with file paths to the upload images, if any
 var createQuestion = function(questionObj, res) {
-	Question.create(questionObj, function(err, newQ) {
+	delete questionObj.answers; // = [];
+	delete questionObj.tags; // = [];
+	delete questionObj.favorited; // = [];
+	delete questionObj.comments; // = [];
+	delete questionObj.votes; // = [];
+	delete questionObj.redFlagged; // = [];
+	// TODO: questionObj.user = req.session.userId; 
+	sails.log.info('questionObj: ', questionObj);
+
+	Question.create(questionObj).exec(function createQuestion(err, newQ) {
 		if (err) {
+			sails.log.error('error msg: ', err);
 			return res.serverError({error: 'failed to create question'});
-			// return res.json({message: 'failed to create question'});
 		}
 		return res.ok({data: newQ});
-		// return res.json(newQ);
 	});
 }
