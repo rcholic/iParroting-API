@@ -6,11 +6,11 @@ module.exports = {
   // user has been authenticated with third party user
   mobileAppAuth: function(req, res) {
     var email = req.body.email;
-    var provider = req.body.email;
+    var provider = req.body.provider;
     var password = req.body.password;
     var thirdPartyAuthToken = req.body.authToken; // token from the third party auth, e.g. facebook token
 
-    if (!email || thirdPartyAuthToken || !provider) {
+    if (!email && !thirdPartyAuthToken && !provider) {
       return res.forbidden({error: 'Access forbidden'});
     }
 

@@ -103,14 +103,24 @@ var uploadToS3 = function(req, res, fieldName) {
 };
 
 // Persist question to database with file paths to the upload images, if any
+var deleteFields = ['answers', 'tags', 'favorited', 'comments', 'votes', 'redFlagged'];
 var createQuestion = function(questionObj, res) {
+
+	deleteFields.forEach(function(field) {
+		delete questionObj[field]; // TODO: KEEP tags if present
+		if (questionObj[field]) {
+			// delete field if empty
+		}
+	});
+	/*
 	delete questionObj.answers; // = [];
 	delete questionObj.tags; // = [];
 	delete questionObj.favorited; // = [];
 	delete questionObj.comments; // = [];
 	delete questionObj.votes; // = [];
 	delete questionObj.redFlagged; // = [];
-	// TODO: questionObj.user = req.session.userId; 
+	*/
+	questionObj.user = req.session.userId;
 	sails.log.info('questionObj: ', questionObj);
 
 	Question.create(questionObj).exec(function createQuestion(err, newQ) {
