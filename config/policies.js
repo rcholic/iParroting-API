@@ -26,6 +26,10 @@ module.exports.policies = {
 
   'FavoriteController': {
     'addOrRemoveFavoriteQuestion': ['jwtAuth', 'sessionAuth']
+  },
+
+  'QuestionController': {
+    'uploadImageToServer': ['jwtAuth', 'sessionAuth']
   }
 
   /***************************************************************************

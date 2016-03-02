@@ -41,7 +41,6 @@ module.exports = {
 
 	// upload images to the hard drive of the hosting server
 	uploadImageToServer: function(req, res) {
-
 		var uploadFile = req.file(config.UPLOAD_IMG_FIELD);
 		sails.log.debug('uploadFile: ', uploadFile);
 		uploadFile.upload({
