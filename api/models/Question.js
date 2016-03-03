@@ -18,6 +18,10 @@ module.exports = {
       type: 'string'
     },
 
+    audio: {
+      type: 'string'
+    },
+
     // array of image paths
     images: {
       type: 'array'

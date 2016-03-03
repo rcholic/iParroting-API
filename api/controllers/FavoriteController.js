@@ -12,13 +12,11 @@ module.exports = {
 	// post, params: {user: 'userId', question: 'questionId'}
 	addOrRemoveFavoriteQuestion: function(req, res) {
 		var params = req.params.all();
-		var userId = params.user || null;
+		var userId = req.session.userId || null;
 		var questionId = params.question || null;
 		sails.log.info('userId: ', userId);
 		if (!userId || !questionId) {
-      // TODO: get user in the server session
       return res.forbidden({error: 'user and question are required'});
-			// return res.status(403).send({message: 'user and quesetion are required'});
 		}
 		Favorite.findOne({user: userId})
 						.populate('questions')

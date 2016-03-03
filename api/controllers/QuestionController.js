@@ -70,6 +70,7 @@ module.exports = {
 		sails.log.info('creating a question, req.params.all: ', req.params.all());
 		if (typeof req.file === 'function' && req.file(config.UPLOAD_IMG_FIELD)) {
 			return uploadToS3(req, res, config.UPLOAD_IMG_FIELD);
+			// TODO: upload audio together with images 
 		}
 
 		return createQuestion(req.params.all(), res);

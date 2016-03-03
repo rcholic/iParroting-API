@@ -13,8 +13,14 @@ module.exports = function(req, res, next) {
 
  // config.TOKEN_VALID_DAYS
  var today = moment();
- if (!payload.sub || !payload.authToken || moment.unix(payload.exp).isAfter(today)) {
+ if (!payload.sub || !payload.authToken || moment.unix(payload.exp).isBefore(today)) {
    return res.forbidden({error: 'Access is forbidden'});
+ }
+
+ // if the session does not have user info, get it from payload - JWT
+ if (!req.session.userId || !req.session.user) {
+   req.session.userId = payload.sub;
+   req.session.user = payload;
  }
 
  next();

@@ -6,8 +6,8 @@ var today = moment();
 console.info('today is: ', today);
 var tomorrow = moment.unix(exp);
 
-if (tomorrow.isAfter(today)) {
-  console.log('after')
+if (tomorrow.isBefore(today)) {
+  console.log('expired!!')
 }
 
 //
