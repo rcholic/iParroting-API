@@ -4,11 +4,12 @@ var config = require('../services/config');
 
 
 module.exports = function(req, res, next) {
- if (!req.headers || !req.headers.Authorization) {
+ var authorizationHeader = req.headers.Authorization || req.headers.authorization;
+ if (!req.headers || !authorizationHeader) {
    return res.forbidden({error: 'You are not authorized yet'});
  }
 
- var token = req.headers.Authorization.split(' ')[1];
+ var token = authorizationHeader.split(' ')[1];
  var payload = jwt.decode(token, config.JWTTOKEN_SECRET);
 
  // config.TOKEN_VALID_DAYS
