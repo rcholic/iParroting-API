@@ -49,7 +49,11 @@ module.exports.routes = {
 
 
   // favorite:
-  'post /api/v1/favorite': 'FavoriteController.addOrRemoveFavoriteQuestion'
+  'post /api/v1/favorite': 'FavoriteController.addOrRemoveFavoriteQuestion',
+
+  // comment:
+  'get /api/v1/comments/question/:questionId': 'CommentController.fetchCommentsForQuestion',
+  'get /api/v1/comments/answer/:answerId': 'CommentController.fetchCommentsForAnswer'
 
   /***************************************************************************
   *                                                                          *
