@@ -10,11 +10,15 @@ module.exports = function(req, res, next) {
  }
 
  var token = authorizationHeader.split(' ')[1];
- var payload = jwt.decode(token, config.JWTTOKEN_SECRET);
+ token = token.trim();
+ sails.log.info('token to be decoded: ', token);
+ var payload = jwt.decode(JSON.stringify(token), config.JWTTOKEN_SECRET);
 
  // config.TOKEN_VALID_DAYS
  var today = moment();
  if (!payload.sub || !payload.authToken || moment.unix(payload.exp).isBefore(today)) {
+   req.session.userId = null;
+   req.session.authenticated = false;
    return res.forbidden({error: 'Access is forbidden'});
  }
 

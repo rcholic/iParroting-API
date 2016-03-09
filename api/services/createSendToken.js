@@ -32,11 +32,11 @@ var createSendToken = function(user, req, res) {
       });
     }
 
-    req.session.user = payload;
+    // req.session.user = payload;
     req.session.userId = payload.sub; // user id
     req.session.authenticated = true; // for policy to use
     var token = jwt.encode(payload, 'config.JWTTOKEN_SECRET');
-    return res.ok({data: token});
+    return res.ok({data: token, userId: payload.sub});
   });
 
 };
