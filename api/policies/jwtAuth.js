@@ -1,6 +1,7 @@
 
 var jwt = require('jwt-simple');
 var config = require('../services/config');
+var moment = require('moment');
 
 
 module.exports = function(req, res, next) {
@@ -12,7 +13,7 @@ module.exports = function(req, res, next) {
  var token = authorizationHeader.split(' ')[1];
  token = token.trim();
  sails.log.info('token to be decoded: ', token);
- var payload = jwt.decode(JSON.stringify(token), config.JWTTOKEN_SECRET);
+ var payload = jwt.decode(token, 'config.JWTTOKEN_SECRET');
 
  // config.TOKEN_VALID_DAYS
  var today = moment();
