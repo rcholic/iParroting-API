@@ -12,6 +12,7 @@ module.exports = function(req, res, next) {
   // User is allowed, proceed to the next policy,
   // or if this is the last policy, the controller
   // must been authenticated and must have a userId in the session
+  sails.log.info('authenticated ?', req.session.authenticated, req.session.userId);
   if (req.session.authenticated && !!req.session.userId) {
     return next();
   }

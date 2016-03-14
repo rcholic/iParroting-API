@@ -12,7 +12,18 @@ var config = require('../services/config');
 // Promise.promisify(amazonS3Service);
 
 module.exports = {
-
+	// override the blueprint for find one
+	findOne: function(req, res) {
+		sails.log.info('question id: ', req.allParams().id);
+		Question.findOneById(req.allParams().id)
+		.populateAll()
+		.exec(function(err, foundQuestion) {
+			if (err) {
+				return res.serverError({error: 'not found'})
+			}
+			return res.ok({data: foundQuestion});
+		});
+	},
 	/**
 	* fetch questions by page and page size
 	*/

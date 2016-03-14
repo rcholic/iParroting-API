@@ -1,12 +1,12 @@
 var moment = require('moment');
 
-var exp = moment().add(7, 'days').unix();
+var exp = moment().add(-7, 'days').unix();
 
 var today = moment();
 console.info('today is: ', today);
 var tomorrow = moment.unix(exp);
 
-if (tomorrow.isBefore(today)) {
+if (moment.unix(exp).isBefore(today)) {
   console.log('expired!!')
 }
 
@@ -15,4 +15,4 @@ if (tomorrow.isBefore(today)) {
 //   console.info('after today');
 // } else {
 //   console.info('before today');
-// }
+// }s

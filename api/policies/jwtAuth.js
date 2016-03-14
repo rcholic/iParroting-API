@@ -14,15 +14,18 @@ module.exports = function(req, res, next) {
  token = token.trim();
  sails.log.info('token to be decoded: ', token);
  var payload = jwt.decode(token, 'config.JWTTOKEN_SECRET');
+ sails.log('payload.sub: ', payload.sub);
 
  // config.TOKEN_VALID_DAYS
  var today = moment();
- if (!payload.sub || !payload.authToken || moment.unix(payload.exp).isBefore(today)) {
+
+ if (!payload.sub) {
+   // moment.unix(payload.exp).isBefore(today)
    req.session.userId = null;
    req.session.authenticated = false;
    return res.forbidden({error: 'Access is forbidden'});
  }
-
+ req.session.authenticated = true;
  // if the session does not have user info, get it from payload - JWT
  if (!req.session.userId || !req.session.user) {
    req.session.userId = payload.sub;
