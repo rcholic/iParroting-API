@@ -32,7 +32,8 @@ module.exports = {
     },
 
     username: {
-      type: 'string'
+      type: 'string',
+      unique: true
     },
 
     activated: {
