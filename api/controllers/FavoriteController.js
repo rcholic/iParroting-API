@@ -12,7 +12,7 @@ module.exports = {
 	// post, params: {user: 'userId', question: 'questionId'}
 	addOrRemoveFavoriteQuestion: function(req, res) {
 		var params = req.params.all();
-		var userId = req.session.userId || null;
+		var userId = req.session.userId || null; // get userId in the session
 		var questionId = params.question || null;
 		sails.log.info('userId: ', userId);
 		if (!userId || !questionId) {
@@ -44,7 +44,7 @@ module.exports = {
 								// save the update
 								foundFav.save(function(err, updatedFav) {
 									if (err) return res.serverError({error: 'error in saving the favorite'}); // res.json({message: 'error in adding favorites'});
-									sails.log.info('success updating favorite');
+									sails.log.info('success updating favorite, ', updatedFav);
 									return res.ok({data: updatedFav}); // res.json(updatedFav);
 								});
 							}
