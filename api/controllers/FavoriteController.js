@@ -12,7 +12,8 @@ module.exports = {
   findOne: function(req, res) {
 		sails.log.info('favorite id: ', req.allParams().id);
     Favorite.findOneById(req.allParams().id)
-    .populateAll()
+    .populate('user')
+//     .populateAll()
     .exec(function(err, foundFav) {
       if (err) {
         return res.serverError({error: 'not found'});

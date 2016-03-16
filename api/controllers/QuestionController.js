@@ -9,21 +9,81 @@ var amazonS3Service = require('../services/AmazonS3');
 var Q = require('q');
 var Promise = require('bluebird');
 var config = require('../services/config');
+var _ = require('lodash');
 // Promise.promisify(amazonS3Service);
 
 module.exports = {
 	// override the blueprint for find one
+
 	findOne: function(req, res) {
 		sails.log.info('question id: ', req.allParams().id);
 		Question.findOneById(req.allParams().id)
 		.populateAll()
 		.exec(function(err, foundQuestion) {
 			if (err) {
-				return res.serverError({error: 'not found'})
+				return res.serverError({error: 'not found'});
 			}
+			/*
+			var userIds = _.map(foundQuestion.favorited, function(fav) {
+				return fav.user; //userId
+			});
+
+			User.find({
+				id: userIds
+			})
+			.then(function(favoritedUsers) {
+				console.info('resolved favoritedUsers: ', favoritedUsers);
+				console.info('favoritedUsers: ', favoritedUsers);
+				favoritedUsers.forEach(function(user, idx) {
+					delete user.favorites;
+					delete user.password;
+					delete user.redFlags;
+					delete user.comments;
+					delete user.questions;
+					delete user.votes;
+					foundQuestion.favorited[idx].user = user;
+				});
+
+				return res.ok({data: foundQuestion});
+			}).
+			catch(function(err) {
+				return res.serverError({error: 'not found'});
+			});
+			*/
+
 			return res.ok({data: foundQuestion});
+
 		});
 	},
+
+/*
+	findOne: function(req, res) {
+		sails.log.info('question id: ', req.allParams().id);
+		Question.findOneById(req.allParams().id)
+		.populateAll()
+		.then(function(question) {
+			var favoritedUsers = User.find({
+				id: _.pluck(question.favorited, 'user')
+			})
+			.then(function(favoritedUsers) {
+				return favoritedUsers;
+			});
+			return [question, favoritedUsers];
+		})
+		.spread(function(question, favoritedUsers) {
+			favoritedUsers = _.indexBy(favoritedUsers, 'id');
+			question.favorited = _.map(question.favorited, function(fav) {
+				fav.user = favoritedUsers[fav.user];
+				return fav;
+			});
+			return res.ok({data: question});
+		})
+		.catch(function(err) {
+			return res.serverError({error: 'not found, server error'});
+		});
+	},
+	*/
+
 	/**
 	* fetch questions by page and page size
 	*/
