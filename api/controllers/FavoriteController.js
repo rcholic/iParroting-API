@@ -42,8 +42,11 @@ module.exports = {
 								Favorite.create(favObj, function(err, newFav) {
 									if (err) return res.serverError({error: 'error in saving the favorite'}); // res.json({message: 'error in adding favorites'});
 
-									sails.log.info('success creating favorite');
-									return res.ok({data: newFav}); //res.json(newFav);
+                  favoriteCountsOnQuestion(questionId).then(function(question) {
+                    newFav.count = question.favorited.length; // piggyback the count of the favorite
+                    return res.ok({data: updatedFav});
+                  });
+
 								});
 							} else {
 								sails.log.info('pushing in question now!');
@@ -58,9 +61,22 @@ module.exports = {
 								foundFav.save(function(err, updatedFav) {
 									if (err) return res.serverError({error: 'error in saving the favorite'}); // res.json({message: 'error in adding favorites'});
 									sails.log.info('success updating favorite, ', updatedFav);
-									return res.ok({data: updatedFav}); // res.json(updatedFav);
+
+                  favoriteCountsOnQuestion(questionId).then(function(question) {
+                    updatedFav.count = question.favorited.length; // piggyback the count of the favorite
+                    return res.ok({data: updatedFav});
+                  });
+
 								});
 							}
 						});
 	}, // update
 };
+
+/**
+* return a promise for the found question
+*/
+function favoriteCountsOnQuestion(questionId) {
+  return Question.findOneById(questionId)
+    .populate('favorited');
+}
