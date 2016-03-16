@@ -17,9 +17,9 @@ module.exports = function(req, res, next) {
  sails.log('payload.sub: ', payload.sub);
 
  // config.TOKEN_VALID_DAYS
- var today = moment().unix();
+ // var today = moment().unix();
 
- if (!payload.sub) {  // || moment(payload.exp).isBefore(today)
+ if (!payload.sub || moment.unix(payload.exp).isBefore(moment().unix())) {  // || moment(payload.exp).isBefore(today)
    //
    req.session.userId = null;
    req.session.authenticated = false;
