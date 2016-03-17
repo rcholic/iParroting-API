@@ -42,9 +42,14 @@ module.exports = {
 								Favorite.create(favObj, function(err, newFav) {
 									if (err) return res.serverError({error: 'error in saving the favorite'}); // res.json({message: 'error in adding favorites'});
 
+
                   favoriteCountsOnQuestion(questionId).then(function(question) {
                     newFav.count = question.favorited.length; // piggyback the count of the favorite
-                    return res.ok({data: updatedFav});
+                    return res.ok({data: newFav});
+                  }).catch(function(err) {
+                    sails.log.error('error in retrieving num of favorite');
+                  }).finally(function() {
+                    sails.log.info('finally done in favoriting!');
                   });
 
 								});
@@ -65,6 +70,12 @@ module.exports = {
                   favoriteCountsOnQuestion(questionId).then(function(question) {
                     updatedFav.count = question.favorited.length; // piggyback the count of the favorite
                     return res.ok({data: updatedFav});
+                  }).catch(function(err) {
+                    sails.log.error('error in retrieving num of favorite');
+                    // updatedFav.count = 0;
+                    return res.ok({data: updatedFav});
+                  }).finally(function() {
+                    sails.log.info('finally done!');
                   });
 
 								});
