@@ -48,74 +48,44 @@ module.exports = {
 							if (foundVote.voteType !== voteType) {
 									foundVote.voteType = voteType; // update the voteType
 							} else {
-								foundVote.voteType = 0; // nothing
+								foundVote.voteType = 0; // nullify it
 							}
-
+							// update the voteType and return the total counts for both voteTypes
 							foundVote.save(function(err, updatedVote) {
 								if (err) {
 									return res.serverError({error: 'error in updating vote'});
 								}
 								foundVote = updatedVote; // assign the updatedVote to foundVote
-								sails.log.info('foundVote = updatedVote');
 
-								var obj1 = voteCountQueryObj;
-								obj1.voteType = 1; // upCount query
-								var obj2 = voteCountQueryObj;
-								obj2.voteType = -1; // downCount query
+								var upCountObj = voteCountQueryObj;
+								upCountObj.voteType = 1; // upCount query
+								var downCountObj = voteCountQueryObj;
+								downCountObj.voteType = -1; // downCount query
 								// concatenate promises for resolving together
-								var promises = [];
-								promises.push(countVotes(obj1));
-								promises.push(countVotes(obj1));
-								sails.log.info('promises: ', promises);
-								countBothVotes(promises).then(function(bothCounts) {
-									sails.log.info('response: ', response);
-									foundVote.upCount = bothCounts[0]; // upCount
-									foundVote.downCount = bothCounts[1]; // downCount
+								var promises = [countVotes(upCountObj), countVotes(downCountObj)];
+								Q.all(promises).spread(function(upCount, downCount) {
+									sails.log.info('upCount: ', upCount);
+									sails.log.info('downCount: ', downCount);
+									foundVote.upCount = upCount || foundVote.upCount;//bothCounts[0]; // upCount
+									foundVote.downCount = downCount || foundVote.downCount; // bothCounts[1]; // downCount
 
 									return res.ok({data: foundVote});
-								});
-							});
+								}).fail(function(err) {
+									// return the foundVote if count promises fail
+									return res.ok({data: foundVote});
+								}); // Q.all()
+							}); // foundVote.save()
+							
+						} // else
+				}); // exec
 
-
-
-							/*
-							countBothVotes(voteCountQueryObj).then(function(bothCounts) {
-								foundVote.upCount = bothCounts.upCount;
-								foundVote.downCount = bothCounts.downCount;
-								return res.ok({data: foundVote});
-							});
-							*/
-
-						}
-
-				});
 	}, // create
 };
 
 /**
 * voteQueryObj: {question: questionId, voteType: voteType};
+* return promise
 */
 function countVotes(voteQueryObj) {
 	return Vote.count(voteQueryObj);
-}
-
-function countBothVotes(promises) {
-	return Q.all(promises);
-	// var bothCounts = {upCount: -1, downCount: -1};
-	// var deferred = Q.defer();
-	//
-	// voteQueryObj.voteType = 1;
-	// Vote.count(voteQueryObj, function(err, upCount) {
-	// 	sails.log.info('upCount: ', upCount);
-	// 	bothCounts.upCount = upCount;
-	// });
-	//
-	// voteQueryObj.voteType = -1;
-	// Vote.count(voteQueryObj, function(err, downCount) {
-	// 	sails.log.info('downCount: ', downCount);
-	// 	bothCounts.downCount = downCount;
-	// });
-	//
-	// deferred.resolve(bothCounts);
-	// return deferred.promise;
 }
