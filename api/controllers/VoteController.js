@@ -75,7 +75,7 @@ module.exports = {
 									return res.ok({data: foundVote});
 								}); // Q.all()
 							}); // foundVote.save()
-							
+
 						} // else
 				}); // exec
 
@@ -83,7 +83,8 @@ module.exports = {
 };
 
 /**
-* voteQueryObj: {question: questionId, voteType: voteType};
+* voteQueryObj: {question: questionId, voteType: voteType} or
+* {answer: answerId, voteType: voteType};
 * return promise
 */
 function countVotes(voteQueryObj) {
