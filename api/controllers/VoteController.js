@@ -4,6 +4,7 @@
  * @description :: Server-side logic for managing votes
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
+var Q = require('q');
 
 module.exports = {
 	create: function(req, res) {
@@ -36,17 +37,15 @@ module.exports = {
 							};
 							Vote.create(vote, function(err, newVoteObj) {
 								if (err) return res.serverError({error: 'error in creating new vote'});
-							//	newVoteObj.upCount = voteType === 1 ? 1 : 0; // count for new vote is 1 by default
-							// 	newVoteObj.downCount = voteType === -1 ? 1 : 0; // count for new vote is 1 by default
+								newVoteObj.upCount = voteType === 1 ? 1 : 0; // count for new vote is 1 by default
+							 	newVoteObj.downCount = voteType === -1 ? 1 : 0; // count for new vote is 1 by default
 
-								newVoteObj = updateVoteCounts(voteType, newVoteObj, 1);
 								return res.ok({data: newVoteObj});
 							});
 
 						} else {
 							// found the vote, update it
 							if (foundVote.voteType !== voteType) {
-
 									foundVote.voteType = voteType; // update the voteType
 									foundVote.save(function(err, updatedVote) {
 										if (err) {
@@ -57,13 +56,26 @@ module.exports = {
 									});
 							}
 
-							countVotes(voteCountQueryObj).then(function(count) {
-								sails.log.info('count response: ', count);
-								foundVote = updateVoteCounts(voteType, foundVote, count);
+							var obj1 = voteCountQueryObj;
+							obj1.voteType = 1; // upCount query
+							var obj2 = voteCountQueryObj;
+							obj2.voteType = -1; // downCount query
+							// concatenate promises for resolving together
+							Q.all([countVotes(obj1), countVotes(obj2)]).then(function(bothCounts) {
+								sails.log.info('response: ', response);
+								foundVote.upCount = bothCounts[0]; // upCount
+								foundVote.downCount = bothCounts[1]; // downCount
 
 								return res.ok({data: foundVote});
 							});
 
+							/*
+							countBothVotes(voteCountQueryObj).then(function(bothCounts) {
+								foundVote.upCount = bothCounts.upCount;
+								foundVote.downCount = bothCounts.downCount;
+								return res.ok({data: foundVote});
+							});
+							*/
 						}
 				});
 	}
@@ -76,12 +88,23 @@ function countVotes(voteQueryObj) {
 	return Vote.count(voteQueryObj);
 }
 
-// update the voteObj with either upCount or downCount with the provided 'count' param
-function updateVoteCounts(voteType, voteObj, count) {
-	if (voteType === 1) {
-		voteObj.upCount = count;
-	} else {
-		voteObj.downCount = count;
-	}
-	return voteObj; // updated upcount or downCount field
+function countBothVotes(voteQueryObj) {
+
+	var bothCounts = {upCount: -1, downCount: -1};
+	var deferred = Q.defer();
+
+	voteQueryObj.voteType = 1;
+	Vote.count(voteQueryObj, function(err, upCount) {
+		sails.log.info('upCount: ', upCount);
+		bothCounts.upCount = upCount;
+	});
+
+	voteQueryObj.voteType = -1;
+	Vote.count(voteQueryObj, function(err, downCount) {
+		sails.log.info('downCount: ', downCount);
+		bothCounts.downCount = downCount;
+	});
+
+	deferred.resolve(bothCounts);
+	return deferred.promise;
 }
