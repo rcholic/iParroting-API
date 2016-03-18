@@ -47,27 +47,36 @@ module.exports = {
 							// found the vote, update it
 							if (foundVote.voteType !== voteType) {
 									foundVote.voteType = voteType; // update the voteType
-									foundVote.save(function(err, updatedVote) {
-										if (err) {
-											return res.serverError({error: 'error in updating vote'});
-										}
-										foundVote = updatedVote; // assign the updatedVote to foundVote
-										sails.log.info('foundVote = updatedVote');
-									});
+							} else {
+								foundVote.voteType = 0; // nothing
 							}
 
-							var obj1 = voteCountQueryObj;
-							obj1.voteType = 1; // upCount query
-							var obj2 = voteCountQueryObj;
-							obj2.voteType = -1; // downCount query
-							// concatenate promises for resolving together
-							Q.all([countVotes(obj1), countVotes(obj2)]).then(function(bothCounts) {
-								sails.log.info('response: ', response);
-								foundVote.upCount = bothCounts[0]; // upCount
-								foundVote.downCount = bothCounts[1]; // downCount
+							foundVote.save(function(err, updatedVote) {
+								if (err) {
+									return res.serverError({error: 'error in updating vote'});
+								}
+								foundVote = updatedVote; // assign the updatedVote to foundVote
+								sails.log.info('foundVote = updatedVote');
 
-								return res.ok({data: foundVote});
+								var obj1 = voteCountQueryObj;
+								obj1.voteType = 1; // upCount query
+								var obj2 = voteCountQueryObj;
+								obj2.voteType = -1; // downCount query
+								// concatenate promises for resolving together
+								var promises = [];
+								promises.push(countVotes(obj1));
+								promises.push(countVotes(obj1));
+								sails.log.info('promises: ', promises);
+								countBothVotes(promises).then(function(bothCounts) {
+									sails.log.info('response: ', response);
+									foundVote.upCount = bothCounts[0]; // upCount
+									foundVote.downCount = bothCounts[1]; // downCount
+
+									return res.ok({data: foundVote});
+								});
 							});
+
+
 
 							/*
 							countBothVotes(voteCountQueryObj).then(function(bothCounts) {
@@ -76,9 +85,11 @@ module.exports = {
 								return res.ok({data: foundVote});
 							});
 							*/
+
 						}
+
 				});
-	}
+	}, // create
 };
 
 /**
@@ -88,23 +99,23 @@ function countVotes(voteQueryObj) {
 	return Vote.count(voteQueryObj);
 }
 
-function countBothVotes(voteQueryObj) {
-
-	var bothCounts = {upCount: -1, downCount: -1};
-	var deferred = Q.defer();
-
-	voteQueryObj.voteType = 1;
-	Vote.count(voteQueryObj, function(err, upCount) {
-		sails.log.info('upCount: ', upCount);
-		bothCounts.upCount = upCount;
-	});
-
-	voteQueryObj.voteType = -1;
-	Vote.count(voteQueryObj, function(err, downCount) {
-		sails.log.info('downCount: ', downCount);
-		bothCounts.downCount = downCount;
-	});
-
-	deferred.resolve(bothCounts);
-	return deferred.promise;
+function countBothVotes(promises) {
+	return Q.all(promises);
+	// var bothCounts = {upCount: -1, downCount: -1};
+	// var deferred = Q.defer();
+	//
+	// voteQueryObj.voteType = 1;
+	// Vote.count(voteQueryObj, function(err, upCount) {
+	// 	sails.log.info('upCount: ', upCount);
+	// 	bothCounts.upCount = upCount;
+	// });
+	//
+	// voteQueryObj.voteType = -1;
+	// Vote.count(voteQueryObj, function(err, downCount) {
+	// 	sails.log.info('downCount: ', downCount);
+	// 	bothCounts.downCount = downCount;
+	// });
+	//
+	// deferred.resolve(bothCounts);
+	// return deferred.promise;
 }
