@@ -48,13 +48,14 @@ module.exports = {
 							if (foundVote.voteType !== voteType) {
 									foundVote.voteType = voteType; // update the voteType
 							} else {
-								foundVote.voteType = 0; // nullify it
+								foundVote.voteType = 0; // user undid the previous vote (nullified)
 							}
 							// update the voteType and return the total counts for both voteTypes
 							foundVote.save(function(err, updatedVote) {
 								if (err) {
 									return res.serverError({error: 'error in updating vote'});
 								}
+								sails.log.info('updatedVote: ', updatedVote);
 								foundVote = updatedVote; // assign the updatedVote to foundVote
 
 								var upCountObj = voteCountQueryObj;
