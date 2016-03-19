@@ -10,7 +10,8 @@ module.exports = {
 	create: function(req, res) {
 		var questionId = req.body.question || null;
 		var answerId = req.body.answer || null;
-		var userId = req.body.user || null; // TODO: get it from session
+		// var userId = req.body.user || null; // TODO: get it from session
+		var userId = req.session.userId || null; // get userId in the session
 		var voteType = req.body.voteType >= 1 ? 1 : -1; // 1 for up, -1 for downvote
 		var queryObj = {user: userId};
 		var voteCountQueryObj = {voteType: voteType}; // used for counting the votes of the same voteType;
