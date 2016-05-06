@@ -11,6 +11,7 @@ module.exports = {
     var thirdPartyAuthToken = req.body.authToken; // token from the third party auth, e.g. facebook token
 
     if (!email && !thirdPartyAuthToken && !provider) {
+      console.error('access forbidden!');
       return res.forbidden({error: 'Access forbidden'});
     }
 
@@ -20,6 +21,7 @@ module.exports = {
       password: password,
       thirdPartyAuthToken: thirdPartyAuthToken
     };
+    console.info('third party user: ', user);
 
     return createSendToken(user, req, res);
   },

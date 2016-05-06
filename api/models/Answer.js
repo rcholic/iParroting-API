@@ -38,6 +38,10 @@ module.exports = {
     comments: {
       collection: 'comment',
       via: 'answer'
+    },
+
+    user: {
+      model: 'user'
     }
   }
 };

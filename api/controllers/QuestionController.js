@@ -192,7 +192,7 @@ var createQuestion = function(questionObj, res) {
 	delete questionObj.votes; // = [];
 	delete questionObj.redFlagged; // = [];
 	*/
-	questionObj.user = req.session.userId;
+	questionObj.user = '5701da29b04add1e4092cacc'; // req.session.userId;
 	sails.log.info('questionObj: ', questionObj);
 
 	Question.create(questionObj).exec(function createQuestion(err, newQ) {

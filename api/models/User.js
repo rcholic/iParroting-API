@@ -49,6 +49,11 @@ module.exports = {
       via: 'user'
     },
 
+    answers: {
+      collection: 'answer',
+      via: 'user'
+    },
+
     comments: {
       collection: 'comment',
       via: 'user'

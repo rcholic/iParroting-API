@@ -29,7 +29,7 @@ module.exports.policies = {
   },
 
   'QuestionController': {
-    'uploadImageToServer': ['jwtAuth', 'sessionAuth']
+    // 'uploadImageToServer': ['jwtAuth', 'sessionAuth']
   }
 
   /***************************************************************************

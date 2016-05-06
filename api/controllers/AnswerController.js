@@ -68,6 +68,7 @@ var createAnswer = function(answerObj, res) {
     return res.notFound({error: 'no question is associated with the answer'});
 		// return res.status(405).send({message: 'no question is associated with the answer'});
 	}
+  answerObj.user = '5701da29b04add1e4092cacc'; // TODO: fetch current user in session
 	Answer.create(answerObj, function(err, newA) {
 		if (err) {
       return res.serverError({error: 'error in saving the answer'});
