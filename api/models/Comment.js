@@ -21,6 +21,11 @@ module.exports = {
 
     answer: {
       model: 'answer'
+    },
+
+    votes: {
+      collection: 'vote',
+      via: 'comment'
     }
   }
 };

@@ -25,6 +25,10 @@ module.exports = {
 
     question: {
       model: 'question'
+    },
+    
+    comment: {
+      model: 'comment'
     }
   }
 };
