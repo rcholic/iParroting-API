@@ -26,6 +26,7 @@ var findComments = function(req, res, queryObj) {
 		.where(queryObj)
 		.populate('question')
 		.populate('answer')
+		.populate('user')
 		// .populateAll()
 		.sort('createdAt DESC')
 		.exec(function(err, comments) {
