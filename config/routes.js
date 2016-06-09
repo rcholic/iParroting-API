@@ -46,6 +46,7 @@ module.exports.routes = {
 
   // answers:
   'get /api/v1/question/:questionId/answers': 'AnswerController.fetchAnswers',
+  'post /api/v1/answer/new': 'AnswerController.create',
 
 
   // favorite:

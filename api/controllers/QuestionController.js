@@ -23,6 +23,28 @@ module.exports = {
 			if (err) {
 				return res.serverError({error: 'not found'});
 			}
+
+			// populate user object for each comment
+			var commentUserIds = _.map(foundQuestion.comments, function(cmt) {
+				return cmt.user;
+			});
+			User.find({id: commentUserIds})
+				.then(function(users) {
+					users.forEach(function(user, idx) {
+						delete user.questions;
+						delete user.answers;
+						delete user.password;
+						delete user.comments;
+						delete user.votes;
+						delete user.favorites;
+						delete user.redFlags;
+						delete user.activated;
+						delete user.updatedAt;
+						delete user.createdAt;
+						foundQuestion.comments[idx].user = user;
+					});
+					return res.ok({data: foundQuestion});
+				});
 			/*
 			var userIds = _.map(foundQuestion.favorited, function(fav) {
 				return fav.user; //userId
@@ -51,7 +73,8 @@ module.exports = {
 			});
 			*/
 
-			return res.ok({data: foundQuestion});
+
+			// return res.ok({data: foundQuestion});
 
 		});
 	},
