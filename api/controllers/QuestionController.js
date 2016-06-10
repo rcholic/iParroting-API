@@ -6,6 +6,7 @@
  */
 
 var amazonS3Service = require('../services/AmazonS3');
+var userServices = require('../services/userServices');
 var Q = require('q');
 var Promise = require('bluebird');
 var config = require('../services/config');
@@ -17,95 +18,45 @@ module.exports = {
 
 	findOne: function(req, res) {
 		sails.log.info('question id: ', req.allParams().id);
-		Question.findOneById(req.allParams().id)
-		.populateAll()
-		.exec(function(err, foundQuestion) {
-			if (err) {
-				return res.serverError({error: 'not found'});
-			}
-
-			// populate user object for each comment
-			var commentUserIds = _.map(foundQuestion.comments, function(cmt) {
-				return cmt.user;
-			});
-			User.find({id: commentUserIds})
-				.then(function(users) {
-					users.forEach(function(user, idx) {
-						delete user.questions;
-						delete user.answers;
-						delete user.password;
-						delete user.comments;
-						delete user.votes;
-						delete user.favorites;
-						delete user.redFlags;
-						delete user.activated;
-						delete user.updatedAt;
-						delete user.createdAt;
-						foundQuestion.comments[idx].user = user;
-					});
-					return res.ok({data: foundQuestion});
-				});
-			/*
-			var userIds = _.map(foundQuestion.favorited, function(fav) {
-				return fav.user; //userId
-			});
-
-			User.find({
-				id: userIds
-			})
-			.then(function(favoritedUsers) {
-				console.info('resolved favoritedUsers: ', favoritedUsers);
-				console.info('favoritedUsers: ', favoritedUsers);
-				favoritedUsers.forEach(function(user, idx) {
-					delete user.favorites;
-					delete user.password;
-					delete user.redFlags;
-					delete user.comments;
-					delete user.questions;
-					delete user.votes;
-					foundQuestion.favorited[idx].user = user;
-				});
-
-				return res.ok({data: foundQuestion});
-			}).
-			catch(function(err) {
-				return res.serverError({error: 'not found'});
-			});
-			*/
-
-
-			// return res.ok({data: foundQuestion});
-
-		});
-	},
-
-/*
-	findOne: function(req, res) {
-		sails.log.info('question id: ', req.allParams().id);
-		Question.findOneById(req.allParams().id)
+		Question.findOne(req.allParams().id)
 		.populateAll()
 		.then(function(question) {
-			var favoritedUsers = User.find({
-				id: _.pluck(question.favorited, 'user')
-			})
-			.then(function(favoritedUsers) {
-				return favoritedUsers;
+			console.info('found question after populateAll: ', question);
+			var commentUserIds = _.map(question.comments, function(cmt) {
+				return cmt.user;
 			});
-			return [question, favoritedUsers];
-		})
-		.spread(function(question, favoritedUsers) {
-			favoritedUsers = _.indexBy(favoritedUsers, 'id');
-			question.favorited = _.map(question.favorited, function(fav) {
-				fav.user = favoritedUsers[fav.user];
-				return fav;
+			var commentUsers = User.find({
+				id: commentUserIds
+			}).then(function(commentUsers) {
+				return commentUsers;
+			});
+
+			var answerUserIds = _.map(question.answers, function(ans) {
+				return ans.user;
+			});
+			var answerUsers = User.find({
+				id: answerUserIds
+			}).then(function(answerUsers) {
+				return answerUsers;
+			});
+			return [question, commentUsers, answerUsers];
+		}).spread(function(question, commentUsers, answerUsers) {
+			commentUsers = _.keyBy(commentUsers, 'id');
+			answerUsers = _.keyBy(answerUsers, 'id');
+			question.comments = _.map(question.comments, function(cmt) {
+				cmt.user = userServices.secureUserObjStrip(commentUsers[cmt.user]);
+				return cmt;
+			});
+
+			question.answers = _.map(question.answers, function(ans) {
+				ans.user = userServices.secureUserObjStrip(answerUsers[ans.user]);
+				return ans;
 			});
 			return res.ok({data: question});
-		})
-		.catch(function(err) {
-			return res.serverError({error: 'not found, server error'});
+		}).catch(function(err) {
+			return res.serverError({error: err});
 		});
 	},
-	*/
 
 	/**
 	* fetch questions by page and page size
