@@ -1,6 +1,7 @@
 var config = require('./config');
 var jwt = require('jwt-simple');
 var moment = require('moment');
+var userServices = require('./userServices');
 
 var createSendToken = function(user, req, res) {
   var payload = {
@@ -38,7 +39,7 @@ var createSendToken = function(user, req, res) {
     req.session.userId = payload.sub; // user id
     req.session.authenticated = true; // for policy to use
     var token = jwt.encode(payload, 'config.JWTTOKEN_SECRET');
-    return res.ok({data: token, userId: payload.sub});
+    return res.ok({data: token, userInfo: userServices.secureUserObjStrip(foundUser)});
   });
 
 };
