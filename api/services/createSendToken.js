@@ -21,7 +21,7 @@ var createSendToken = function(user, req, res) {
     if (foundUser) {
       sails.log.info('foundUser: ', foundUser);
       payload.sub = foundUser.id || '';
-    } else {
+    } else if(!foundUser && !user.isLocal) {
       // did not find user, create a new user for him/her
       payload.password = 'in1tial1'; // TODO: change this to another complex initial password
       User.create(payload).exec(function created(err, newUser) {
@@ -30,7 +30,9 @@ var createSendToken = function(user, req, res) {
           payload.sub = newUser.id;
         }
       });
-    }
+  } else if(!foundUser && user.isLocal) {
+      return res.serverError({error: 'Log in failed'});
+  }
 
     // req.session.user = payload;
     req.session.userId = payload.sub; // user id

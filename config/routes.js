@@ -38,6 +38,7 @@ module.exports.routes = {
 
   // users:
   'post /api/v1/users/mobile-3rdparty-login': 'UserController.mobileThirdPartyLogin',
+  'post /api/v1/users/auth': 'UserController.localAuth',
 
   // questions:
   'get /api/v1/questions/:size/:page': 'QuestionController.fetchQuestions',

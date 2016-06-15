@@ -19,7 +19,8 @@ module.exports = {
       email: email,
       provider: provider,
       password: password,
-      thirdPartyAuthToken: thirdPartyAuthToken
+      thirdPartyAuthToken: thirdPartyAuthToken,
+      isLocal: false
     };
     console.info('third party user: ', user);
 
@@ -28,7 +29,19 @@ module.exports = {
 
   // local authentication with user registered in the database
   localAuth: function(req, res) {
-    // TODO: authenticated with the web app
+    // authenticate with the web app (local registered user)
+    // var username = req.body.username;
+    var email = req.body.email;
+    var password = req.body.password;
+
+    var user = {
+        email: email,
+        password: password,
+        isLocal: true,
+    };
+
+    return createSendToken(user, req, res);
+
   }
 
 };
