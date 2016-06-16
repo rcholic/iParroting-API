@@ -1,4 +1,3 @@
-var bcrypt = require('bcrypt-nodejs');
 var createSendToken = require('./createSendToken');
 
 
