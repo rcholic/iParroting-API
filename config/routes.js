@@ -39,6 +39,8 @@ module.exports.routes = {
   // users:
   'post /api/v1/users/mobile-3rdparty-login': 'UserController.mobileThirdPartyLogin',
   'post /api/v1/users/auth': 'UserController.localAuth',
+  'get /api/v1/users/check_email_exists/:email': 'UserController.emailExists',
+  'get /api/v1/users/check_username_exists/:username': 'UserController.usernameExists',
 
   // questions:
   'get /api/v1/questions/:size/:page': 'QuestionController.fetchQuestions',
