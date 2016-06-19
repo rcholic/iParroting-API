@@ -30,7 +30,7 @@ var createSendToken = function(user, req, res) {
         req.session.userId = payload.sub; // user id
         req.session.authenticated = true; // for policy to use
         var token = jwt.encode(payload, 'config.JWTTOKEN_SECRET');
-        return res.ok({data: token, userInfo: userServices.secureUserObjStrip(foundUser)});
+        return res.ok({token: token, userInfo: userServices.secureUserObjStrip(foundUser)});
 
     } else if (foundUser && user.isLocal) {
           // check on password
@@ -42,7 +42,7 @@ var createSendToken = function(user, req, res) {
                  req.session.userId = payload.sub; // user id
                  req.session.authenticated = true; // for policy to use
                  var token = jwt.encode(payload, 'config.JWTTOKEN_SECRET');
-                 return res.ok({data: token, userInfo: userServices.secureUserObjStrip(foundUser)});
+                 return res.ok({token: token, userInfo: userServices.secureUserObjStrip(foundUser)});
              }
           });
 
@@ -58,7 +58,7 @@ var createSendToken = function(user, req, res) {
               req.session.userId = payload.sub; // user id
               req.session.authenticated = true; // for policy to use
               var token = jwt.encode(payload, 'config.JWTTOKEN_SECRET');
-              return res.ok({data: token, userInfo: userServices.secureUserObjStrip(foundUser)});
+              return res.ok({token: token, userInfo: userServices.secureUserObjStrip(foundUser)});
 
             }
           });
