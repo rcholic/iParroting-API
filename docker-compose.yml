@@ -1,0 +1,30 @@
+version: '2'
+
+services:
+ MongoDB:
+   image: mongo
+   #networks:
+   # - iParrotingDev
+
+ api:
+   build: .
+#   image: rcholic/sails-microservice:dev
+   environment:
+    - AMAZON_S3_KEY
+    - JWTTOKEN_SECRET
+    - AMAZON_S3_SECRET
+    - AMAZON_S3_IMGBUCKETNAME
+    - AMAZON_S3_AUDIOBUCKETNAME
+   volumes:
+    - "./iParroting-API:/host"  
+   #command: bash -c "cd /host && ls && sails lift"
+   #networks:
+   # - iParrotingDev
+   links:
+    - MongoDB:MongoDB
+   ports:
+    - "3050:1337"
+
+ #networks:
+ # iParrotingDev:
+  #  driver: custom-driver-1
