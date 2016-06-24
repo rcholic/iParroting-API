@@ -67,7 +67,7 @@ module.exports = {
 		sails.log.info('req.params.all(): ', req.allParams()); // req.params.all()
 		var page = req.params.page; // page number starts from 1
 		var pageSize = req.params.size || 10; // page size
-		var promises = [Question.find().paginate({page: page, limit: pageSize}), Question.count()]
+		var promises = [Question.find().paginate({page: page, limit: pageSize}).sort('createdAt DESC'), Question.count()]
 		Q.all(promises).spread(function(questions, total) {
 			sails.log.info('questions.length: ', questions.length);
 			sails.log.info('total: ', total);
