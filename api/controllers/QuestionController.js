@@ -67,6 +67,16 @@ module.exports = {
 		sails.log.info('req.params.all(): ', req.allParams()); // req.params.all()
 		var page = req.params.page; // page number starts from 1
 		var pageSize = req.params.size || 10; // page size
+		var promises = [Question.find().paginate({page: page, limit: pageSize}), Question.count()]
+		Q.all(promises).spread(function(questions, total) {
+			sails.log.info('questions.length: ', questions.length);
+			sails.log.info('total: ', total);
+			return res.ok({data: questions, pageSize: pageSize, page: page, total: total});
+		}).fail(function(err) {
+			return res.serverError({error: err});
+		});
+
+		/*
 		Question.find()
 			.paginate({page: page, limit: pageSize})
 			.populateAll()
@@ -81,8 +91,9 @@ module.exports = {
 					return res.serverError({error: err});
 				}
 
-				return res.ok({data: questions}); // res.json(questions);
+				return res.ok({data: questions, pageSize: pageSize, page: page, total: 100}); // res.json(questions);
 			});
+			*/
 	},
 
 	// upload images to the hard drive of the hosting server
