@@ -4,6 +4,8 @@ services:
  MongoDB:
    image: mongo
    container_name: mongo
+   volumes:
+    - ./_mongo_data:/data/db
 
  nginx:
    image: jwilder/nginx-proxy
