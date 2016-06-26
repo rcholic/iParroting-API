@@ -3,28 +3,35 @@ version: '2'
 services:
  MongoDB:
    image: mongo
-   #networks:
-   # - iParrotingDev
+   container_name: mongo
+
+ nginx:
+   image: jwilder/nginx-proxy
+   container_name: nginx_server
+   ports:
+    - "80:80"
+    - "443:443"
+   volumes:
+    - ./ssl_certs:/etc/nginx/certs
+    - /var/run/docker.sock:/tmp/docker.sock:ro
+   environment:
+    - VIRTUAL_PORT=1337  # 3050 port on host does not work!
 
  api:
    build: .
 #   image: rcholic/sails-microservice:dev
+   container_name: iparroting_api
    environment:
     - AMAZON_S3_KEY
     - JWTTOKEN_SECRET
     - AMAZON_S3_SECRET
     - AMAZON_S3_IMGBUCKETNAME
     - AMAZON_S3_AUDIOBUCKETNAME
+    - VIRTUAL_HOST=rest.iparroting.net
+    - VIRTUAL_PROTO=http
    volumes:
     - "./iParroting-API:/host"  
-   #command: bash -c "cd /host && ls && sails lift"
-   #networks:
-   # - iParrotingDev
    links:
     - MongoDB:MongoDB
    ports:
     - "3050:1337"
-
- #networks:
- # iParrotingDev:
-  #  driver: custom-driver-1
