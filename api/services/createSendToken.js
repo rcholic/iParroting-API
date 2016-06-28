@@ -14,6 +14,7 @@ var createSendToken = function(user, req, res) {
     exp: moment().add(config.TOKEN_VALID_DAYS, 'days').unix()
   };
   // check if the user exists
+  sails.log.info('user: ', user);
   User.findOneByEmail(user.email, function(err, foundUser) {
 
     if (err) {
@@ -29,19 +30,22 @@ var createSendToken = function(user, req, res) {
         // req.session.user = payload;
         req.session.userId = payload.sub; // user id
         req.session.authenticated = true; // for policy to use
-        var token = jwt.encode(payload, 'config.JWTTOKEN_SECRET');
+        var token = jwt.encode(payload, config.JWTTOKEN_SECRET);
         return res.ok({token: token, userInfo: userServices.secureUserObjStrip(foundUser)});
 
     } else if (foundUser && user.isLocal) {
           // check on password
+          sails.log.info('foundUser local! checking password!');
           bcrypt.compare(user.password, foundUser.password, function(err, response) {
              if (!response) {
                  return res.serverError({error: 'Email and/or password is wrong'});
              } else {
                  // req.session.user = payload;
+                 payload.sub = foundUser.id;
                  req.session.userId = payload.sub; // user id
                  req.session.authenticated = true; // for policy to use
-                 var token = jwt.encode(payload, 'config.JWTTOKEN_SECRET');
+                 var token = jwt.encode(payload, config.JWTTOKEN_SECRET);
+                 sails.log.info('generating token: ', token);
                  return res.ok({token: token, userInfo: userServices.secureUserObjStrip(foundUser)});
              }
           });
@@ -57,7 +61,7 @@ var createSendToken = function(user, req, res) {
               // req.session.user = payload;
               req.session.userId = payload.sub; // user id
               req.session.authenticated = true; // for policy to use
-              var token = jwt.encode(payload, 'config.JWTTOKEN_SECRET');
+              var token = jwt.encode(payload, config.JWTTOKEN_SECRET);
               return res.ok({token: token, userInfo: userServices.secureUserObjStrip(foundUser)});
 
             }

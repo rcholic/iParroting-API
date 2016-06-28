@@ -12,12 +12,8 @@ module.exports = function(req, res, next) {
 
  var token = authorizationHeader.split(' ')[1];
  token = token.trim();
- sails.log.info('token to be decoded: ', token);
- var payload = jwt.decode(token, 'config.JWTTOKEN_SECRET');
- sails.log('payload.sub: ', payload.sub);
-
- // config.TOKEN_VALID_DAYS
- // var today = moment().unix();
+ var payload = jwt.decode(token, config.JWTTOKEN_SECRET);
+ sails.log.info('payload: ', payload);
 
  if (!payload.sub || moment.unix(payload.exp).isBefore(moment().unix())) {  // || moment(payload.exp).isBefore(today)
    //

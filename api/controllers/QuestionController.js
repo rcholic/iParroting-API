@@ -155,6 +155,7 @@ var uploadToS3 = function(req, res, fieldName) {
 
 				var questionObj = req.params.all();
 				questionObj.images = filePaths;
+				questionObj.user = req.session.userId;
 				createQuestion(questionObj, res);
 		});
 };
@@ -177,7 +178,7 @@ var createQuestion = function(questionObj, res) {
 	delete questionObj.votes; // = [];
 	delete questionObj.redFlagged; // = [];
 	*/
-	questionObj.user = '5701da29b04add1e4092cacc'; // req.session.userId;
+	// questionObj.user = req.session.userId; // '5701da29b04add1e4092cacc'; // req.session.userId;
 	sails.log.info('questionObj: ', questionObj);
 
 	Question.create(questionObj).exec(function createQuestion(err, newQ) {
