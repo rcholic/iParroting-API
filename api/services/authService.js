@@ -32,10 +32,7 @@ module.exports = {
     // var username = req.body.username;
     var email = req.body.email;
     var password = req.body.password;
-    sails.log.info('email: ', email);
-    sails.log.info('password: ', password);
-    sails.log.info('Authorization: ', req.headers.Authorization);
-
+    
     var user = {
         email: email,
         password: password,
