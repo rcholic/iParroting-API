@@ -34,6 +34,7 @@ module.exports = {
     var password = req.body.password;
     sails.log.info('email: ', email);
     sails.log.info('password: ', password);
+    sails.log.info('Authorization: ', req.headers.Authorization);
 
     var user = {
         email: email,

@@ -37,6 +37,10 @@ module.exports.policies = {
       'create': ['jwtAuth', 'sessionAuth']
   },
 
+  'UserController': {
+      'localAuth': ['jwtAuth']
+  },
+
 
   /***************************************************************************
   *                                                                          *
