@@ -39,13 +39,17 @@ module.exports = {
 		sails.log.info('creating answer... req.params: ', req.params.all());
 		// sails.log.info('req.file.audio ', req.file('audio'));
 		if (req.file(config.UPLOAD_AUDIO_FIELD)) {
+            // TODO: handle audio upload
 			return uploadAudioToS3(req, res, config.UPLOAD_AUDIO_FIELD);
 		}
-		return createAnswer(req.params.all(), res);
+        var answerObj = req.params.all();
+        answerObj.user = req.session.userId; // get user from session 
+		return createAnswer(answerObj, res);
 	}
 };
 
 var uploadAudioToS3 = function(req, res, fieldName) {
+    // TODO: handle audio upload with the user id information in session
 	var bucketName = config.AMAZON_S3_AUDIOBUCKETNAME;
 	amazonS3Service(req, res, bucketName, fieldName, function(err, uploadedFiles) {
 		var filePaths = [];
@@ -68,7 +72,7 @@ var createAnswer = function(answerObj, res) {
     return res.notFound({error: 'no question is associated with the answer'});
 		// return res.status(405).send({message: 'no question is associated with the answer'});
 	}
-  answerObj.user = '5701da29b04add1e4092cacc'; // TODO: fetch current user in session
+    // answerObj.user = '5701da29b04add1e4092cacc'; // TODO: fetch current user in session
 	Answer.create(answerObj, function(err, newA) {
 		if (err) {
       return res.serverError({error: 'error in saving the answer'});
