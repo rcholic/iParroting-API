@@ -28,6 +28,23 @@ module.exports = {
 		var email = req.param('email');
 		return checkIfUserExists({username: null, email: email}, res);
 	},
+
+	// override create
+	create: function(req, res, next) {
+		var params = req.params.all();
+		var userObj = {
+			email: params.email || null,
+			username: params.username || null,
+			password: params.password || null
+		};
+		User.create(userObj).exec(function createUser(err, newU) {
+			if (err) {
+				sails.log.error('error msg: ', err);
+				return res.serverError({error: 'failed to create user'});
+			}
+			return res.ok({data: newU});
+		});
+	}
 };
 
 var checkIfUserExists = function(userObj, res) {
