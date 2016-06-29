@@ -141,21 +141,45 @@ var uploadToS3 = function(req, res, fieldName) {
 var createQuestion = function(questionObj, res) {
 
 	sails.log.info('questionObj to be persisted: ', questionObj);
-	Question.create(questionObj).exec(function saveQuestion(err, newQ) {
-		if (err) {
-			sails.log.error('error msg: ', err);
-			return res.serverError({error: 'failed to create question'});
-		}
-		return res.ok({data: newQ});
-	});
+	if (questionObj.tagArr.length === 0) {
+		Question.create(questionObj).exec(function saveQuestion(err, newQ) {
+			if (err) {
+				sails.log.error('error msg: ', err);
+				return res.serverError({error: 'failed to create question'});
+			}
+			return res.ok({data: newQ});
+		});
+	} else {
+		// save tags as many to many
+		var promises = questionObj.tagArr.map(function(tagStr) {
+			return Tag.create({name: tagStr}); // TODO: check duplicate tags
+		});
+
+		Q.all(promises).then(function(tags) {
+			// tags is an array of Tag objects
+			questionObj.tags = tags.map(function(tag) {
+				return tag.id;
+			});
+			Question.create(questionObj).exec(function saveQuestion(err, newQ) {
+				if (err) {
+					sails.log.error('error msg: ', err);
+					return res.serverError({error: 'failed to create question'});
+				}
+				return res.ok({data: newQ});
+			});
+		}).catch(function(err) {
+			return res.serverError({error: err});
+		});
+
+	}
 };
 
 var sanitizedQuestionObj = function(params, req) {
 	var aQuestion = {
 		title: params.title,
 		content: params.content,
-		user: '577334fbae701c9e14f573b1', // TODO: req.session.userId,
-		tagArr: !!params.tags ? params.tags.split(',') : [];
+		user: req.session.userId || '',
+		tagArr: !!params.tags ? params.tags.split(',') : [],
 	};
 
 	return aQuestion;
