@@ -178,7 +178,7 @@ var sanitizedQuestionObj = function(params, req) {
 	var aQuestion = {
 		title: params.title,
 		content: params.content,
-		user: req.session.userId || '',
+		user: req.session.userId,
 		tagArr: !!params.tags ? params.tags.split(',') : [],
 	};
 
