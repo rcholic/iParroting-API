@@ -152,7 +152,7 @@ var createQuestion = function(questionObj, res) {
 	} else {
 		// save tags as many to many
 		var promises = questionObj.tagArr.map(function(tagStr) {
-			return Tag.create({name: tagStr}); // TODO: check duplicate tags
+			return Tag.findOrCreate({name: tagStr});
 		});
 
 		Q.all(promises).then(function(tags) {
