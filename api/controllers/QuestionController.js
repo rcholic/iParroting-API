@@ -75,25 +75,6 @@ module.exports = {
 		}).fail(function(err) {
 			return res.serverError({error: err});
 		});
-
-		/*
-		Question.find()
-			.paginate({page: page, limit: pageSize})
-			.populateAll()
-			// .populate('user')
-			// .populate('comments')
-			// .populate('votes')
-			// .populate('answers')
-			.sort('createdAt DESC')
-			.exec(function(err, questions) {
-				if (err) {
-					// next(err);
-					return res.serverError({error: err});
-				}
-
-				return res.ok({data: questions, pageSize: pageSize, page: page, total: 100}); // res.json(questions);
-			});
-			*/
 	},
 
 	// upload images to the hard drive of the hosting server
@@ -113,10 +94,6 @@ module.exports = {
 
 			sails.log.info('success in uploading image, uploadedFiles: ', uploadedFiles);
 			return res.ok({data: {files: uploadedFiles, textParams: req.params.all()}});
-			// return res.json({
-			// 	files: uploadedFiles, // array, each element has 'fd' field as the uploaded path url
-			// 	textParams: req.params.all()
-			// });
 		});
 
 		sails.log.info('block after uploading file!');
@@ -124,13 +101,14 @@ module.exports = {
 
 	// create a new question and upload images, if any
 	create: function(req, res) {
-		sails.log.info('creating a question, req.params.all: ', req.params.all());
+		sails.log.info('creating a question, req.files: ', req.files);
 		if (typeof req.file === 'function' && req.file(config.UPLOAD_IMG_FIELD)) {
+			sails.log.info('uploading files to amazon s3, req.file: ', req.file);
 			return uploadToS3(req, res, config.UPLOAD_IMG_FIELD);
 			// TODO: upload audio together with images
 		}
-
-		return createQuestion(req.params.all(), res);
+		sails.log.info('creating question without uploading file. req.file: ', req.file);
+		return createQuestion(sanitizedQuestionObj(req.params.all(), req), res); // sanitize params
 	}
 };
 
@@ -153,39 +131,56 @@ var uploadToS3 = function(req, res, fieldName) {
 				});
 				deferred.resolve(filePaths);
 
-				var questionObj = req.params.all();
+				var questionObj = sanitizedQuestionObj(req.params.all(), req);
 				questionObj.images = filePaths;
-				questionObj.user = req.session.userId;
 				createQuestion(questionObj, res);
 		});
 };
 
 // Persist question to database with file paths to the upload images, if any
-var deleteFields = ['answers', 'tags', 'favorited', 'comments', 'votes', 'redFlagged'];
 var createQuestion = function(questionObj, res) {
 
-	deleteFields.forEach(function(field) {
-		delete questionObj[field]; // TODO: KEEP tags if present
-		if (questionObj[field]) {
-			// delete field if empty
-		}
-	});
-	/*
-	delete questionObj.answers; // = [];
-	delete questionObj.tags; // = [];
-	delete questionObj.favorited; // = [];
-	delete questionObj.comments; // = [];
-	delete questionObj.votes; // = [];
-	delete questionObj.redFlagged; // = [];
-	*/
-	// questionObj.user = req.session.userId; // '5701da29b04add1e4092cacc'; // req.session.userId;
-	sails.log.info('questionObj: ', questionObj);
+	sails.log.info('questionObj to be persisted: ', questionObj);
+	if (questionObj.tagArr.length === 0) {
+		Question.create(questionObj).exec(function saveQuestion(err, newQ) {
+			if (err) {
+				sails.log.error('error msg: ', err);
+				return res.serverError({error: 'failed to create question'});
+			}
+			return res.ok({data: newQ});
+		});
+	} else {
+		// save tags as many to many
+		var promises = questionObj.tagArr.map(function(tagStr) {
+			return Tag.findOrCreate({name: tagStr});
+		});
 
-	Question.create(questionObj).exec(function createQuestion(err, newQ) {
-		if (err) {
-			sails.log.error('error msg: ', err);
-			return res.serverError({error: 'failed to create question'});
-		}
-		return res.ok({data: newQ});
-	});
+		Q.all(promises).then(function(tags) {
+			// tags is an array of Tag objects
+			questionObj.tags = tags.map(function(tag) {
+				return tag.id;
+			});
+			Question.create(questionObj).exec(function saveQuestion(err, newQ) {
+				if (err) {
+					sails.log.error('error msg: ', err);
+					return res.serverError({error: 'failed to create question'});
+				}
+				return res.ok({data: newQ});
+			});
+		}).catch(function(err) {
+			return res.serverError({error: err});
+		});
+
+	}
+};
+
+var sanitizedQuestionObj = function(params, req) {
+	var aQuestion = {
+		title: params.title,
+		content: params.content,
+		user: req.session.userId || '',
+		tagArr: !!params.tags ? params.tags.split(',') : [],
+	};
+
+	return aQuestion;
 }
