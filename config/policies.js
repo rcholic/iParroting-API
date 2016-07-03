@@ -38,7 +38,7 @@ module.exports.policies = {
   },
 
   'UserController': {
-      'localAuth': ['jwtAuth']
+      // 'localAuth': ['jwtAuth']
   },
 
 
