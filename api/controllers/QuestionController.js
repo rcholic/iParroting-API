@@ -152,7 +152,7 @@ var createQuestion = function(questionObj, res) {
 	} else {
 		// save tags as many to many
 		var promises = questionObj.tagArr.map(function(tagStr) {
-			return Tag.findOrCreate({name: tagStr});
+			return Tag.findOrCreate({name: tagStr.trim()});
 		});
 
 		Q.all(promises).then(function(tags) {
