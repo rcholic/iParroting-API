@@ -152,7 +152,7 @@ var createQuestion = function(questionObj, res) {
 	} else {
 		// save tags as many to many
 		var promises = questionObj.tagArr.map(function(tagStr) {
-			return Tag.findOrCreate({name: tagStr.trim()});
+			return Tag.findOrCreate({name: tagStr});
 		});
 
 		Q.all(promises).then(function(tags) {
@@ -176,7 +176,8 @@ var createQuestion = function(questionObj, res) {
 var sanitizedQuestionObj = function(params, req) {
 	params.tags = params.tags.trim();
 	if (!!params.tags) {
-		params.tags = params.tags.indexOf(',') > -1 ? params.tags.split(',') : [params.tags.trim()];
+		var allTags = params.tags.indexOf(',') > -1 ? params.tags.split(',') : [params.tags.trim()];
+		params.tags = allTags.map(function(t) {return t.trim();}); // trim
 	} else {
 		params.tags = [];
 	}
