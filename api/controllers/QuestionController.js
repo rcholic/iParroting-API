@@ -170,16 +170,21 @@ var createQuestion = function(questionObj, res) {
 		}).catch(function(err) {
 			return res.serverError({error: err});
 		});
-
 	}
 };
 
 var sanitizedQuestionObj = function(params, req) {
+	params.tags = params.tags.trim();
+	if (!!params.tags) {
+		params.tags = params.tags.indexOf(',') > -1 ? params.tags.split(',') : [params.tags.trim()];
+	} else {
+		params.tags = [];
+	}
 	var aQuestion = {
 		title: params.title,
 		content: params.content,
 		user: req.session.userId,
-		tagArr: !!params.tags ? params.tags.split(',') : [],
+		tagArr: params.tags,
 	};
 
 	return aQuestion;
