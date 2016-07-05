@@ -69,9 +69,7 @@ module.exports = {
 		var pageSize = req.params.size || 10; // page size
 		var promises = [Question.find().paginate({page: page, limit: pageSize}).sort('createdAt DESC'), Question.count()]
 		Q.all(promises).spread(function(questions, total) {
-			sails.log.info('questions.length: ', questions.length);
-			sails.log.info('total: ', total);
-			return res.ok({data: questions, pageSize: pageSize, page: page, total: total});
+			return res.ok({data: questions, pageSize: parseInt(pageSize), page: parseInt(page), total: total});
 		}).fail(function(err) {
 			return res.serverError({error: err});
 		});
@@ -176,7 +174,8 @@ var createQuestion = function(questionObj, res) {
 var sanitizedQuestionObj = function(params, req) {
 	params.tags = params.tags.trim();
 	if (!!params.tags) {
-		params.tags = params.tags.indexOf(',') > -1 ? params.tags.split(',') : [params.tags.trim()];
+		var allTags = params.tags.indexOf(',') > -1 ? params.tags.split(',') : [params.tags.trim()];
+		params.tags = allTags.map(function(t) {return t.trim();}); // trim
 	} else {
 		params.tags = [];
 	}
