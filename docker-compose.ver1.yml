@@ -14,7 +14,7 @@ services:
     - "80:80"
     - "443:443"
    volumes:
-    - ./rapid_ssl:/etc/nginx/certs
+    - ./ssl_net:/etc/nginx/certs
     - /var/run/docker.sock:/tmp/docker.sock:ro
    environment:
     - VIRTUAL_PORT=1337  # 3050 port on host does not work!
@@ -29,8 +29,8 @@ services:
     - AMAZON_S3_SECRET
     - AMAZON_S3_IMGBUCKETNAME
     - AMAZON_S3_AUDIOBUCKETNAME
-    #- VIRTUAL_HOST=rest.iparroting.net
-    - VIRTUAL_HOST=rest1.iparroting.com
+    #- VIRTUAL_HOST=www.iparroting.net
+    - VIRTUAL_HOST=www.iparroting.net
     - VIRTUAL_PROTO=http
    volumes:
     - "./iParroting-API:/host"  
