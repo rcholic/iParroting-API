@@ -7,33 +7,17 @@ services:
    volumes:
     - ./_mongo_data:/data/db
 
-# nginx:
-#   image: jwilder/nginx-proxy
-#   container_name: nginx_server
-#   ports:
-#    - "80:80"
-#    - "443:443"
-#   volumes:
-#    - ./ssl_letsen:/etc/nginx/certs
-#    - /var/run/docker.sock:/tmp/docker.sock:ro
-#   environment:
-#    - VIRTUAL_PORT=1337  # 3050 port on host does not work!
-
-
- nginx_portal:
-   image: steveltn/https-portal
-   container_name: nginx_proxy_container
+ nginx:
+   image: jwilder/nginx-proxy
+   container_name: nginx_server
    ports:
     - "80:80"
     - "443:443"
    volumes:
-    - ./ssl_letsen:/var/lib/https-portal
+    - ./ssl_certs:/etc/nginx/certs
     - /var/run/docker.sock:/tmp/docker.sock:ro
    environment:
-    DOMAINS: 'rest.iparroting.net -> http://api:1337'
-    #STAGE: 'production'
-    #VIRTUAL_PORT: '1337'  # 3050 port on host does not work!
-
+    - VIRTUAL_PORT=1337  # 3050 port on host does not work!
 
  api:
    build: .
