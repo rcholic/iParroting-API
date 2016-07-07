@@ -21,7 +21,6 @@ module.exports = {
 		Question.findOne(req.allParams().id)
 		.populateAll()
 		.then(function(question) {
-			console.info('found question after populateAll: ', question);
 			var commentUserIds = _.map(question.comments, function(cmt) {
 				return cmt.user;
 			});
@@ -62,12 +61,9 @@ module.exports = {
 	* fetch questions by page and page size
 	*/
 	fetchQuestions: function(req, res, next) {
-		sails.log.info('req.headers.Authorization: ', req.headers.Authorization || req.headers.authorization);
-		sails.log.info('req.user is: ', req.session.user);
-		sails.log.info('req.params.all(): ', req.allParams()); // req.params.all()
 		var page = req.params.page; // page number starts from 1
 		var pageSize = req.params.size || 10; // page size
-		var promises = [Question.find().paginate({page: page, limit: pageSize}).sort('createdAt DESC'), Question.count()]
+		var promises = [Question.find().populate('user').paginate({page: page, limit: pageSize}).sort('createdAt DESC'), Question.count()]
 		Q.all(promises).spread(function(questions, total) {
 			return res.ok({data: questions, pageSize: parseInt(pageSize), page: parseInt(page), total: total});
 		}).fail(function(err) {
