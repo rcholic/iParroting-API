@@ -41,6 +41,14 @@ module.exports.policies = {
       // 'localAuth': ['jwtAuth']
   },
 
+  'CommentController': {
+      'create': ['jwtAuth', 'sessionAuth'],
+  },
+
+  'VoteController': {
+      'create': ['jwtAuth', 'sessionAuth'],
+  },
+
 
   /***************************************************************************
   *                                                                          *
