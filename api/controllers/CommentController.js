@@ -18,7 +18,26 @@ module.exports = {
 		var answerId = req.params.answerId;
 		var queryObj = {answer: answerId};
 		findComments(req, res, queryObj);
-	}
+	},
+
+	create: function(req, res) {
+		var commentObj = {user: req.session.userId};
+		var params = req.params.all();
+		if (!!params.question) {
+			commentObj.question = params.question; // comment on questionId
+		} else if (!!params.answer) {
+			commentObj.answer = params.answer; // comment on answerId
+		} else if (!!params.commentId) {
+			commentObj.commentId = params.commentId; //
+		}
+
+		Comment.create(commentObj).exec(function saveComment(err, cmt) {
+			if (err) {
+				return res.serverError({error: 'failed to create comment'});
+			}
+			return res.ok({data: cmt});
+		}); // create comment
+	},
 };
 
 var findComments = function(req, res, queryObj) {
