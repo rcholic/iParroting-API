@@ -7,4 +7,4 @@ WORKDIR /host
 RUN npm install
 EXPOSE 1337
 #CMD sails lift
-CMD PORT=1337 forever start app.js
+CMD PORT=1337 forever start app.js --prod
