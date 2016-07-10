@@ -95,8 +95,10 @@ module.exports = {
 
 	// create a new question and upload images, if any
 	create: function(req, res) {
-		sails.log.info('creating a question, req.files: ', req.files);
-		if (typeof req.file === 'function' && req.file(config.UPLOAD_IMG_FIELD)) {
+		var params = req.params.all();
+		if (!!params.isImgAttached) {
+			// use isImgAttached as flag for uploading image
+			/* typeof req.file === 'function' && req.file(config.UPLOAD_IMG_FIELD) */
 			sails.log.info('uploading files to amazon s3, req.file: ', req.file);
 			return uploadToS3(req, res, config.UPLOAD_IMG_FIELD);
 			// TODO: upload audio together with images

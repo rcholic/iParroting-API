@@ -30,7 +30,7 @@ module.exports.policies = {
 
   'QuestionController': {
     'uploadImageToServer': ['jwtAuth', 'sessionAuth'],
-    'create': ['jwtAuth', 'sessionAuth'],
+  //  'create': ['jwtAuth', 'sessionAuth'],
   },
 
   'AnswerController': {
