@@ -89,17 +89,18 @@ module.exports = {
 			sails.log.info('success in uploading image, uploadedFiles: ', uploadedFiles);
 			return res.ok({data: {files: uploadedFiles, textParams: req.params.all()}});
 		});
-
-		sails.log.info('block after uploading file!');
 	},
 
 	// create a new question and upload images, if any
 	create: function(req, res) {
 		var params = req.params.all();
+		// console.info('files.length: ', req.file(config.UPLOAD_IMG_FIELD)._files.length);
 		if (!!params.isImgAttached) {
 			// use isImgAttached as flag for uploading image
 			/* typeof req.file === 'function' && req.file(config.UPLOAD_IMG_FIELD) */
-			sails.log.info('uploading files to amazon s3, req.file: ', req.file);
+			// read more on the undocumented method: https://github.com/balderdashy/skipper/blob/master/standalone/Upstream/Upstream.js#L51
+			// req.file(config.UPLOAD_IMG_FIELD)._files.length > 0
+			// sails.log.info('uploading files to amazon s3, req.file: ', req.file);
 			return uploadToS3(req, res, config.UPLOAD_IMG_FIELD);
 			// TODO: upload audio together with images
 		}
