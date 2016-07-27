@@ -63,7 +63,13 @@ module.exports = {
 	fetchQuestions: function(req, res, next) {
 		var page = req.params.page; // page number starts from 1
 		var pageSize = req.params.size || 10; // page size
-		var promises = [Question.find().populate('user').paginate({page: page, limit: pageSize}).sort('createdAt DESC'), Question.count()]
+		var promises = [Question.find()
+				.populate('user')
+				.populate('comments')
+				.populate('favorited')
+				.populate('answers')
+				.populate('redFlagged')
+				.paginate({page: page, limit: pageSize}).sort('createdAt DESC'), Question.count()]
 		Q.all(promises).spread(function(questions, total) {
 			return res.ok({data: questions, pageSize: parseInt(pageSize), page: parseInt(page), total: total});
 		}).fail(function(err) {
@@ -182,7 +188,7 @@ var sanitizedQuestionObj = function(params, req) {
 		title: params.title,
 		content: params.content,
 		user: req.session.userId,
-		tagArr: params.tags,
+	//	tagArr: params.tags,
 	};
 
 	return aQuestion;
