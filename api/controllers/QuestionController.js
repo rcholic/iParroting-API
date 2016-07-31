@@ -163,6 +163,7 @@ var createQuestion = function(questionObj, res) {
 			questionObj.tags = tags.map(function(tag) {
 				return tag.id;
 			});
+			delete questionObj.tagArr; // drop the tagArr field
 			Question.create(questionObj).exec(function saveQuestion(err, newQ) {
 				if (err) {
 					sails.log.error('error msg: ', err);
@@ -188,7 +189,7 @@ var sanitizedQuestionObj = function(params, req) {
 		title: params.title,
 		content: params.content,
 		user: req.session.userId,
-	//	tagArr: params.tags,
+		tagArr: params.tags,
 	};
 
 	return aQuestion;
