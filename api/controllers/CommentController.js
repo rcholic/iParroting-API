@@ -39,7 +39,7 @@ module.exports = {
 			if (err) {
 				return res.serverError({error: 'failed to create comment'});
 			}
-			User.find(cmt.user).exec(function(err, foundUser) {
+			User.findOne({id: cmt.user}).exec(function(err, foundUser) {
 				if (err) {
 					return res.serverError({error: 'failed to find user for creating the comment'});
 				}
