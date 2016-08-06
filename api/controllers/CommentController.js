@@ -5,6 +5,8 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
+var userServices = require('../services/userServices');
+
 module.exports = {
 
 	fetchCommentsForQuestion: function(req, res, next) {
@@ -37,7 +39,14 @@ module.exports = {
 			if (err) {
 				return res.serverError({error: 'failed to create comment'});
 			}
-			return res.ok({data: cmt});
+			User.find(cmt.user).exec(function(err, foundUser) {
+				if (err) {
+					return res.serverError({error: 'failed to find user for creating the comment'});
+				}
+				cmt.user = userServices.secureUserObjStrip(foundUser); // populate user as an object
+				return res.ok({data: cmt});
+			});
+
 		}); // create comment
 	},
 };
