@@ -22,7 +22,9 @@ module.exports = {
 
 	create: function(req, res) {
 		var commentObj = {user: req.session.userId};
+
 		var params = req.params.all();
+		commentObj.comment = params.comment;
 		if (!!params.question) {
 			commentObj.question = params.question; // comment on questionId
 		} else if (!!params.answer) {
