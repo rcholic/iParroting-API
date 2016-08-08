@@ -111,7 +111,7 @@ module.exports = {
 			// TODO: upload audio together with images
 		}
 		sails.log.info('creating question without uploading file. req.file: ', req.file);
-		return createQuestion(sanitizedQuestionObj(req.params.all(), req), res); // sanitize params
+		return createQuestion(sanitizedQuestionObj(params, req), res); // sanitize params
 	}
 };
 
