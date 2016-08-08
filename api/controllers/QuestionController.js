@@ -142,7 +142,6 @@ var uploadToS3 = function(req, res, fieldName) {
 
 // Persist question to database with file paths to the upload images, if any
 var createQuestion = function(questionObj, res) {
-
 	sails.log.info('questionObj to be persisted: ', questionObj);
 	if (questionObj.tagArr.length === 0) {
 		Question.create(questionObj).exec(function saveQuestion(err, newQ) {
@@ -178,8 +177,8 @@ var createQuestion = function(questionObj, res) {
 };
 
 var sanitizedQuestionObj = function(params, req) {
-	params.tags = params.tags.trim();
 	if (!!params.tags) {
+		params.tags = params.tags.trim();
 		var allTags = params.tags.indexOf(',') > -1 ? params.tags.split(',') : [params.tags.trim()];
 		params.tags = allTags.map(function(t) {return t.trim();}); // trim
 	} else {
