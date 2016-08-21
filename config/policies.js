@@ -34,7 +34,7 @@ module.exports.policies = {
   },
 
   'AnswerController': {
-      'create': ['jwtAuth', 'sessionAuth']
+    //   'create': ['jwtAuth', 'sessionAuth']
   },
 
   'UserController': {

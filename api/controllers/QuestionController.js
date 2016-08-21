@@ -103,15 +103,11 @@ module.exports = {
 		// console.info('files.length: ', req.file(config.UPLOAD_IMG_FIELD)._files.length);
 		if (!!params.isImgAttached) {
 			// use isImgAttached as flag for uploading image
-			/* typeof req.file === 'function' && req.file(config.UPLOAD_IMG_FIELD) */
-			// read more on the undocumented method: https://github.com/balderdashy/skipper/blob/master/standalone/Upstream/Upstream.js#L51
-			// req.file(config.UPLOAD_IMG_FIELD)._files.length > 0
-			// sails.log.info('uploading files to amazon s3, req.file: ', req.file);
 			return uploadToS3(req, res, config.UPLOAD_IMG_FIELD);
 			// TODO: upload audio together with images
 		}
 		sails.log.info('creating question without uploading file. req.file: ', req.file);
-		return createQuestion(sanitizedQuestionObj(req.params.all(), req), res); // sanitize params
+		return createQuestion(sanitize(req.params.all(), req), res); // sanitize params
 	}
 };
 
@@ -121,20 +117,17 @@ var uploadToS3 = function(req, res, fieldName) {
 		// upload to Amazon S3 storage
 		var bucketName = config.AMAZON_S3_IMGBUCKETNAME;
 		amazonS3Service(req, res, bucketName, fieldName, function(err, uploadedFiles) {
-				var deferred = Q.defer();
 				var filePaths = [];
 				if (err)  {
 					sails.log.error('error in uploading image');
-					deferred.reject(filePaths);
 				}
 				sails.log.info('req.params object: ', req.params.all());
 				// sails.log.info('success in uploading image, uploadedFiles: ', uploadedFiles);
 				filePaths = uploadedFiles.map(function(file) {
 					return file.extra.Location;
 				});
-				deferred.resolve(filePaths);
 
-				var questionObj = sanitizedQuestionObj(req.params.all(), req);
+				var questionObj = sanitize(req.params.all(), req);
 				questionObj.images = filePaths;
 				createQuestion(questionObj, res);
 		});
@@ -177,7 +170,7 @@ var createQuestion = function(questionObj, res) {
 	}
 };
 
-var sanitizedQuestionObj = function(params, req) {
+var sanitize = function(params, req) {
 	params.tags = params.tags.trim();
 	if (!!params.tags) {
 		var allTags = params.tags.indexOf(',') > -1 ? params.tags.split(',') : [params.tags.trim()];
