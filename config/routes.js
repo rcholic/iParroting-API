@@ -57,7 +57,11 @@ module.exports.routes = {
 
   // comment:
   'get /api/v1/comments/question/:questionId': 'CommentController.fetchCommentsForQuestion',
-  'get /api/v1/comments/answer/:answerId': 'CommentController.fetchCommentsForAnswer'
+  'get /api/v1/comments/answer/:answerId': 'CommentController.fetchCommentsForAnswer',
+
+
+  // utils:
+  'post /api/v1/upload/images': 'UtilController.uploadImagesToS3',
 
   /***************************************************************************
   *                                                                          *
