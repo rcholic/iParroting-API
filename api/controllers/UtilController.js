@@ -11,6 +11,7 @@ module.exports = {
 
 	// utility for uploading images to S3
 	uploadImagesToS3: function(req, res, next) {
+		sails.log.info('uploading images to Amazon S3!');
 		var imageBucket = config.AMAZON_S3_IMGBUCKETNAME;
 		amazonS3Service(req, res, imageBucket, config.UPLOAD_IMG_FIELD, function(err, uploadedImages) {
 			var filePaths = [];
@@ -22,6 +23,7 @@ module.exports = {
 			filePaths = uploadedImages.map(function(file) {
 				return file.extra.Location;
 			});
+			console.info('filePaths for uploaded images: ', filePaths);
 
 			return res.ok({data: filePaths});
 		}); // amazonS3Service

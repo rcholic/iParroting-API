@@ -17,7 +17,7 @@ module.exports = {
 	*/
 	fetchAnswers: function(req, res, next) {
 		var questionId = req.params.questionId;
-		sails.log.info('questionId is: ', questionId);
+		// sails.log.info('questionId is: ', questionId);
 		Answer.find()
 			.where({question: questionId})
 			.populate('votes')
