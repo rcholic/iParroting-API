@@ -17,7 +17,7 @@ module.exports = {
 	*/
 	fetchAnswers: function(req, res, next) {
 		var questionId = req.params.questionId;
-		sails.log.info('questionId is: ', questionId);
+		// sails.log.info('questionId is: ', questionId);
 		Answer.find()
 			.where({question: questionId})
 			.populate('votes')
@@ -36,14 +36,14 @@ module.exports = {
 
 	// override the blueprint API for create
 	create: function(req, res) {
-		sails.log.info('creating answer... req.params: ', req.params.all());
+        var params = req.allParams();
+        // params.isAudioAttached = true;
+		sails.log.info('creating answer... req.params: ', params);
 		// sails.log.info('req.file.audio ', req.file('audio'));
-		if (req.file(config.UPLOAD_AUDIO_FIELD)) {
-            // TODO: handle audio upload
+		if (!!params.isAudioAttached) {
 			return uploadAudioToS3(req, res, config.UPLOAD_AUDIO_FIELD);
 		}
         var answerObj = req.params.all();
-        answerObj.user = req.session.userId; // get user from session 
 		return createAnswer(answerObj, res);
 	}
 };
@@ -68,17 +68,34 @@ var uploadAudioToS3 = function(req, res, fieldName) {
 };
 
 var createAnswer = function(answerObj, res) {
+    answerObj = sanitize(answerObj);
+    sails.log.info('creating answer: ', answerObj);
 	if (!answerObj.question) {
     return res.notFound({error: 'no question is associated with the answer'});
 		// return res.status(405).send({message: 'no question is associated with the answer'});
 	}
-    // answerObj.user = '5701da29b04add1e4092cacc'; // TODO: fetch current user in session
-	Answer.create(answerObj, function(err, newA) {
+
+	Answer.create(answerObj).exec(function saveAnswer(err, newA) {
 		if (err) {
-      return res.serverError({error: 'error in saving the answer'});
+            return res.serverError({error: 'error in saving the answer'});
 			// return res.json({message: 'error in saving the answer'});
 		}
     return res.ok({data: newA});
 		// return res.json(newA);
 	});
+};
+
+var sanitize = function(params, req) {
+    var anAnswer = {
+        content: params.content,
+        audioFilePath: params.audioFilePath || '',
+        images: params.images || [],
+        question: params.question || null,
+        // votes:
+        // comments:
+        user: '577334fbae701c9e14f573b1',
+        // req.session.userId,
+    };
+
+    return anAnswer;
 }
