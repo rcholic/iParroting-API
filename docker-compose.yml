@@ -1,55 +1,52 @@
 version: '2'
-
 services:
- MongoDB:
-   image: mongo
-   container_name: mongo
-   volumes:
-    - ./_mongo_data:/data/db
+  MongoDB:
+    image: mongo
+    container_name: mongo
+    volumes:
+      - ../_mongo_data:/data/db
+    networks:
+      - backend
 
-# nginx:
-#   image: jwilder/nginx-proxy
-#   container_name: nginx_server
-#   ports:
-#    - "80:80"
-#    - "443:443"
-#   volumes:
-#    - ./ssl_letsen:/etc/nginx/certs
-#    - /var/run/docker.sock:/tmp/docker.sock:ro
-#   environment:
-#    - VIRTUAL_PORT=1337  # 3050 port on host does not work!
+  nginx_portal:
+    image: steveltn/https-portal
+    container_name: nginx_proxy_container
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../ssl_letsen:/var/lib/https-portal
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    environment:
+     DOMAINS: 'rest.iparroting.net -> http://api:1337'
+     STAGE: 'production'
+    networks:
+      - frontend
 
+  api:
+    build: .
+    container_name: iparroting_api
+    environment:
+      - AMAZON_S3_KEY
+      - JWTTOKEN_SECRET
+      - AMAZON_S3_SECRET
+      - AMAZON_S3_IMGBUCKETNAME
+      - AMAZON_S3_AUDIOBUCKETNAME
+      - VIRTUAL_HOST=rest.iparroting.net
+      - VIRTUAL_PROTO=http
+    volumes:
+      - "./:/host"
+    links:
+      - MongoDB:MongoDB
+    ports:
+      - "3050:1337"
+    networks:
+      - frontend
+      - backend
+      
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
 
- nginx_portal:
-   image: steveltn/https-portal
-   container_name: nginx_proxy_container
-   ports:
-    - "80:80"
-    - "443:443"
-   volumes:
-    - ./ssl_letsen:/var/lib/https-portal
-    - /var/run/docker.sock:/tmp/docker.sock:ro
-   environment:
-    DOMAINS: 'rest.iparroting.net -> http://api:1337'
-    #STAGE: 'production'
-    #VIRTUAL_PORT: '1337'  # 3050 port on host does not work!
-
-
- api:
-   build: .
-#   image: rcholic/sails-microservice:dev
-   container_name: iparroting_api
-   environment:
-    - AMAZON_S3_KEY
-    - JWTTOKEN_SECRET
-    - AMAZON_S3_SECRET
-    - AMAZON_S3_IMGBUCKETNAME
-    - AMAZON_S3_AUDIOBUCKETNAME
-    - VIRTUAL_HOST=rest.iparroting.net
-    - VIRTUAL_PROTO=http
-   volumes:
-    - "./iParroting-API:/host"  
-   links:
-    - MongoDB:MongoDB
-   ports:
-    - "3050:1337"
