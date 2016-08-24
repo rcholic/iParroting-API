@@ -94,8 +94,7 @@ var sanitize = function(params, req) {
         question: params.question || null,
         // votes:
         // comments:
-        user: '577334fbae701c9e14f573b1',
-        // req.session.userId,
+        user: req.session.userId,
     };
 
     return anAnswer;
