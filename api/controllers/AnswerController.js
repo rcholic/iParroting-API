@@ -89,7 +89,7 @@ var sanitize = function(params, req) {
     var anAnswer = {
         content: params.content,
         audioFilePath: params.audioFilePath || '',
-        images: params.imageUrlsConcated.split(",") || []
+        images: params.imageUrlsConcated.split(",") || [],
         question: params.question || null,
         // votes:
         // comments:
