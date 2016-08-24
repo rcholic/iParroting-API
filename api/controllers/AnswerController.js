@@ -20,6 +20,7 @@ module.exports = {
 		// sails.log.info('questionId is: ', questionId);
 		Answer.find()
 			.where({question: questionId})
+            .populate('user')
 			.populate('votes')
 			.populate('comments')
 //			.populateAll()
