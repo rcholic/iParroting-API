@@ -45,7 +45,7 @@ module.exports = {
 			return uploadAudioToS3(req, res, config.UPLOAD_AUDIO_FIELD);
 		}
         var answerObj = req.params.all();
-		return createAnswer(answerObj, res);
+		return createAnswer(answerObj, req, res);
 	}
 };
 
@@ -64,12 +64,12 @@ var uploadAudioToS3 = function(req, res, fieldName) {
 		var answerObj = req.params.all();
 		sails.log('answerObj', answerObj);
 		answerObj.audioFilePath = filePaths.length > 0 ? filePaths[0] : null;
-		createAnswer(answerObj, res);
+		createAnswer(answerObj, req, res);
 	});
 };
 
-var createAnswer = function(answerObj, res) {
-    answerObj = sanitize(answerObj);
+var createAnswer = function(answerObj, req, res) {
+    answerObj = sanitize(answerObj, req);
     sails.log.info('creating answer: ', answerObj);
 	if (!answerObj.question) {
     return res.notFound({error: 'no question is associated with the answer'});
