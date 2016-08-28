@@ -4,24 +4,24 @@ services:
     image: mongo
     container_name: mongo
     volumes:
-      - ../_mongo_data:/data/db
+      - ./_mongo_data:/data/db2
     networks:
       - backend
 
-  nginx_portal:
-    image: steveltn/https-portal
-    container_name: nginx_proxy_container
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ../ssl_letsen:/var/lib/https-portal
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-    environment:
-     DOMAINS: 'rest.iparroting.net -> http://api:1337'
-     STAGE: 'production'
-    networks:
-      - frontend
+#  nginx_portal:
+#    image: steveltn/https-portal
+#    container_name: nginx_proxy_container
+#    ports:
+#      - "80:80"
+#      - "443:443"
+#    volumes:
+#      - ../ssl_letsen:/var/lib/https-portal
+#      - /var/run/docker.sock:/tmp/docker.sock:ro
+#    environment:
+#     DOMAINS: 'rest.iparroting.net -> http://api:1337'
+#     STAGE: 'production'
+#    networks:
+#      - frontend
 
   api:
     build: .
