@@ -90,12 +90,15 @@ var sanitize = function(params, req) {
     var anAnswer = {
         content: params.content,
         audioFilePath: params.audioFilePath || '',
-        images: params.imageUrlsConcated.split(",") || [],
+        images: [],
         question: params.question || null,
         // votes:
         // comments:
         user: req.session.userId,
     };
+    if (!!params.imageUrlsConcated) {
+        anAnswer.images = params.imageUrlsConcated.split(',');
+    }
 
     return anAnswer;
 }
